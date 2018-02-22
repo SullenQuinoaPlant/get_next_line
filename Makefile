@@ -1,3 +1,6 @@
+ROOT = .
+include make_vars.mk
+
 include Makefile.mk
 
 
