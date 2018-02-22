@@ -1,3 +1,7 @@
+ifndef ROOT
+	ROOT = .
+endif
+
 SRC_DIR	= $(ROOT)/sources
 OBJ_DIR = $(ROOT)/sources
 LIB_DIR = $(ROOT)/libs

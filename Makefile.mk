@@ -1,14 +1,27 @@
-NAME = hello_world
-OBJS = hello_world.o\
-		hello_other_world.o
+NAME =
+TARGETS =
+
+OBJ = ./objects
+SRC = ./sources
+
+OBJS := $(patsubst %,$(OBJ)/%.o,$(TARGETS))
+
+ifndef ROOT
+	LIB_DIR = ./libs/objects
+	LIB_H_DIR  = ./libs/includes
+endif
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
+CFLAGS_MORE =
 
-all : $(NAME)
+#nothing to make
+all :
+	@:
 
 $(NAME) : $(OBJS)
-	$(CC) -o $(NAME) $(OBJS)
+	$(CC) $(CFLAGS) $(CFLAGS_MORE)\
+		-o $(NAME) $(OBJS)
 
 clean :
 	-rm $(OBJS)
