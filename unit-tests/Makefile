@@ -1,19 +1,15 @@
-SRC_DIR = ..
-TEST_SRCS := $(wildcard *.test.c)
-#TEST_SRCS += $(shell \
-#	for i in $(SRCS:.c=.test.c); do\
-#		if [ -f $$i ]; then srcs="$$srcs $$i"; fi;\
-#	done; echo $$srcs;)
-TEST_OBJS := $(TEST_SRCS:.c=.o)
+ifndef ROOT
+	ROOT = ..
+	include $(ROOT)/make_vars.mk
+endif
 
-#CMOCKA_DIR := $(shell echo $$(pwd)/cmocka)
-CMOCKA_DIR := ./cmocka
+TEST_SRCS := $(wildcard *.test.c)
+TEST_OBJS := $(TEST_SRCS:.c=.o)
+BUILD_STAMPS := $(TEST_OBJS:.o=.build.stamp)
+EXECUTION_STAMPS := $(TEST_OBJS:.o=.execution.stamp)
 
 CC = gcc
 CFLAGS = -fno-builtin #-Wall -Wextra -Werror
-
-BUILD_STAMPS := $(TEST_OBJS:.o=.build.stamp)
-EXECUTION_STAMPS := $(TEST_OBJS:.o=.execution.stamp)
 
 
 
@@ -31,35 +27,37 @@ build_tests : cmocka $(TEST_OBJS)
 
 .PHONY : cmocka
 cmocka : 
-	if $(CC) $(CFLAGS) boilerplate.c -lcmocka -o test.o; then\
-		rm test.o;\
-		echo "cmocka already installed";\
+	if $(CC) $(CFLAGS)\
+		-I $(LIBS_I) -L $(LIBS_L)\
+	 	boilerplate.c -lcmocka -o test.o; then\
+			rm test.o;\
+			echo "cmocka already installed";\
 	else\
 		$(MAKE) -C cmocka/ >/dev/null;\
+		exit 1;\
 	fi
 
 %.test.o : %.test.c $(SRC_DIR)/%.c
 	@$(CC) $(CFLAGS)\
-		-L $(SRC_DIR) -I $(SRC_DIR)\
-		-L $(CMOCKA_DIR) -I $(CMOCKA_DIR)\
+		-I $(LIBS_I)\
 		-D main=testee_main\
 		-include $(SRC_DIR)/$*.c\
 		$<\
-		-lfillit\
+		-L $(LIBS_L)\
 		-lcmocka\
 		-o $@\
-		-Wl,-rpath=$(CMOCKA_DIR);\
+		-Wl,-rpath=$(LIBS_L);\
 		touch $*.test.build.stamp
 
 %.test.o : %.test.c
 	@$(CC) $(CFLAGS)\
-		-L $(SRC_DIR) -I $(SRC_DIR)\
-		-L $(CMOCKA_DIR) -I $(CMOCKA_DIR)\
+		-I $(SRC_DIR)\
+		-I $(LIBS_I)\
 		$<\
-		-lfillit\
+		-L $(LIBS_L)\
 		-lcmocka\
 		-o $@\
-		-Wl,-rpath=$(CMOCKA_DIR);\
+		-Wl,-rpath=$(LIBS_L);\
 		touch $*.test.build.stamp
 
 %.test.c : $(CMOCKA_DIR)/my_macro_overlay.h
@@ -71,32 +69,19 @@ cmocka :
 #RUN TESTS :
 
 .PHONY : run_tests
-#run_tests : test_execution.stamp
 run_tests : $(EXECUTION_STAMPS)
-
 
 %.execution.stamp : %.build.stamp
 	./$*.o
 	touch $@
-
-#the following clutters less with stamp files but prevents the concurrent execution of tests
-# (whatever)
-#test_execution.stamp : $(BUILD_STAMPS) 
-#	@for i in $(basename $?); do\
-#		if [ -f $$i ]; then ./$$i; fi;\
-#	done
-#	touch test_execution.stamp
-#
-#$(BUILD_STAMPS) :
-#	@:
 
 
 
 ###############
 #MISCELLANEOUS:
 
-.PHONY : all
-all : clean test
+.PHONY : all_unit_tests aut
+all_unit_tests aut : clean test
 
 
 
