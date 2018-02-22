@@ -34,7 +34,8 @@ cmocka :
 			echo "cmocka already installed";\
 	else\
 		$(MAKE) -C cmocka/ >/dev/null;\
-		exit 1;\
+		cp cmocka/libcmocka* $(LIBS_L)/;\
+		cp cmocka/cmocka.h $(LIBS_I)/;\
 	fi
 
 %.test.o : %.test.c $(SRC_DIR)/%.c
@@ -75,7 +76,8 @@ run_tests : $(EXECUTION_STAMPS)
 	./$*.o
 	touch $@
 
-
+%.build.stamp :
+	@:
 
 ###############
 #MISCELLANEOUS:
