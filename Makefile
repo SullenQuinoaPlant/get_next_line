@@ -11,6 +11,11 @@ include Makefile.mk
 
 include make_vars.mk
 
+#######
+#LIBS :
+
+include libs/Makefile
+
 ########
 #TESTS :
 

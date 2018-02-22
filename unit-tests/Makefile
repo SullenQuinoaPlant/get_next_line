@@ -3,7 +3,7 @@ ifndef ROOT
 	include $(ROOT)/make_vars.mk
 endif
 
-TEST_SRCS := $(wildcard *.test.c)
+TEST_SRCS := $(wildcard $(UTEST_DIR)/*.test.c)
 TEST_OBJS := $(TEST_SRCS:.c=.o)
 BUILD_STAMPS := $(TEST_OBJS:.o=.build.stamp)
 EXECUTION_STAMPS := $(TEST_OBJS:.o=.execution.stamp)
@@ -13,8 +13,8 @@ CFLAGS = -fno-builtin #-Wall -Wextra -Werror
 
 
 
-.PHONY : test
-test : list_tests build_tests run_tests
+.PHONY : unit-tests ut
+unit-tests ut : list_tests build_tests run_tests
 
 
 
@@ -29,16 +29,17 @@ build_tests : cmocka $(TEST_OBJS)
 cmocka : 
 	if $(CC) $(CFLAGS)\
 		-I $(LIBS_I) -L $(LIBS_L)\
-	 	boilerplate.c -lcmocka -o test.o; then\
+	 	$(UTEST_DIR)/boilerplate.c\
+		 -lcmocka -o test.o; then\
 			rm test.o;\
 			echo "cmocka already installed";\
 	else\
-		$(MAKE) -C cmocka/ >/dev/null;\
-		cp cmocka/libcmocka* $(LIBS_L)/;\
-		cp cmocka/cmocka.h $(LIBS_I)/;\
+		$(MAKE) -C $(UTEST_DIR)/cmocka/ >/dev/null;\
+		cp $(UTEST_DIR)/cmocka/libcmocka* $(LIBS_L)/;\
+		cp $(UTEST_DIR)/cmocka/cmocka.h $(LIBS_I)/;\
 	fi
 
-%.test.o : %.test.c $(SRC_DIR)/%.c
+$(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c $(SRC_DIR)/%.c
 	@$(CC) $(CFLAGS)\
 		-I $(LIBS_I)\
 		-D main=testee_main\
@@ -50,7 +51,7 @@ cmocka :
 		-Wl,-rpath=$(LIBS_L);\
 		touch $*.test.build.stamp
 
-%.test.o : %.test.c
+$(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c
 	@$(CC) $(CFLAGS)\
 		-I $(SRC_DIR)\
 		-I $(LIBS_I)\
@@ -61,7 +62,8 @@ cmocka :
 		-Wl,-rpath=$(LIBS_L);\
 		touch $*.test.build.stamp
 
-%.test.c : $(CMOCKA_DIR)/my_macro_overlay.h
+$(UTEST_DIR)/%.test.c : $(CMOCKA_DIR)/my_macro_overlay.h
+	@:
 
 
 
@@ -72,7 +74,7 @@ cmocka :
 .PHONY : run_tests
 run_tests : $(EXECUTION_STAMPS)
 
-%.execution.stamp : %.build.stamp
+$(UTEST_DIR)/%.execution.stamp : $(UTEST_DIR)/%.build.stamp
 	./$*.o
 	touch $@
 
@@ -83,15 +85,14 @@ run_tests : $(EXECUTION_STAMPS)
 #MISCELLANEOUS:
 
 .PHONY : all_unit_tests aut
-all_unit_tests aut : clean test
+all_unit_tests aut : clean-tests test
 
 
 
-.PHONY : clean
-clean :
-	-rm *.o
-	-rm *.stamp
-	touch test_execution.stamp
+.PHONY : clean-tests
+clean-tests :
+	-rm $(UTEST_DIR)/*.o
+	-rm $(UTEST_DIR)/*.stamp
 
 
 
