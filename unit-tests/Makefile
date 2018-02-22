@@ -39,30 +39,30 @@ cmocka :
 		cp $(UTEST_DIR)/cmocka/cmocka.h $(LIBS_I)/;\
 	fi
 
-$(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c $(SRC_DIR)/%.c
+%.test.o : %.test.c $(SRC_DIR)/%.c
 	@$(CC) $(CFLAGS)\
 		-I $(LIBS_I)\
 		-D main=testee_main\
 		-include $(SRC_DIR)/$*.c\
 		$<\
 		-L $(LIBS_L)\
-		-lcmocka\
+		-lcmocka -lft\
 		-o $@\
 		-Wl,-rpath=$(LIBS_L);\
-		touch $*.test.build.stamp
+		touch $(UTEST_DIR)/$*.test.build.stamp
 
-$(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c
-	@$(CC) $(CFLAGS)\
+%.test.o : %.test.c
+	$(CC) $(CFLAGS)\
 		-I $(SRC_DIR)\
 		-I $(LIBS_I)\
 		$<\
 		-L $(LIBS_L)\
-		-lcmocka\
+		-lcmocka -lft\
 		-o $@\
 		-Wl,-rpath=$(LIBS_L);\
-		touch $*.test.build.stamp
+		touch $(UTEST_DIR)/$(*F).test.build.stamp
 
-$(UTEST_DIR)/%.test.c : $(CMOCKA_DIR)/my_macro_overlay.h
+%.test.c : $(UTEST_DIR)/cmocka/my_macro_overlay.h
 	@:
 
 
@@ -74,7 +74,7 @@ $(UTEST_DIR)/%.test.c : $(CMOCKA_DIR)/my_macro_overlay.h
 .PHONY : run_tests
 run_tests : $(EXECUTION_STAMPS)
 
-$(UTEST_DIR)/%.execution.stamp : $(UTEST_DIR)/%.build.stamp
+%.execution.stamp : %.build.stamp
 	./$*.o
 	touch $@
 
