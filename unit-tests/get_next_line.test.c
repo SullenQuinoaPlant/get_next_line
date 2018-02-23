@@ -4,6 +4,7 @@
 #include "get_next_line.h"
 
 #include <stdio.h>
+#include <errno.h>
 #define HOW_MANY_TESTS 10
 #include "cmocka/my_macro_overlay.h"
 
@@ -17,6 +18,7 @@ int		main(int ac, char *av[])
 	T(while_1,
 		char	*line;
 		int		count;
+		int		ret;
 
 		while (1)
 		{

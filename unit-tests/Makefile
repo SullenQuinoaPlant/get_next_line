@@ -9,7 +9,9 @@ BUILD_STAMPS := $(TEST_OBJS:.o=.build.stamp)
 EXECUTION_STAMPS := $(TEST_OBJS:.o=.execution.stamp)
 
 CC = gcc
+CFLAGS_MORE =
 CFLAGS = -fno-builtin #-Wall -Wextra -Werror
+CFLAGS += $(CFLAGS_MORE)
 
 
 
@@ -39,16 +41,16 @@ cmocka :
 		cp $(UTEST_DIR)/cmocka/cmocka.h $(LIBS_I)/;\
 	fi
 
-%.test.o : %.test.c $(SRC_DIR)/%.c
-	@$(CC) $(CFLAGS)\
-		-I $(LIBS_I)\
+$(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS)\
+		-I $(LIBS_I) -I $(SRC_DIR)\
 		-D main=testee_main\
 		-include $(SRC_DIR)/$*.c\
 		$<\
 		-L $(LIBS_L)\
 		-lcmocka -lft\
 		-o $@\
-		-Wl,-rpath=$(LIBS_L);\
+		-Wl,-rpath=$$(readlink -e $(LIBS_L));\
 		touch $(UTEST_DIR)/$*.test.build.stamp
 
 %.test.o : %.test.c
@@ -59,7 +61,7 @@ cmocka :
 		-L $(LIBS_L)\
 		-lcmocka -lft\
 		-o $@\
-		-Wl,-rpath=$(LIBS_L);\
+		-Wl,-rpath=$$(readlink -e $(LIBS_L));\
 		touch $(UTEST_DIR)/$(*F).test.build.stamp
 
 %.test.c : $(UTEST_DIR)/cmocka/my_macro_overlay.h
@@ -98,6 +100,7 @@ clean-tests :
 
 .PHONY : list_tests
 list_tests :
+	@echo "source dir is : $(SRC_DIR)"
 	@echo "list of test sources:"
 	@echo $(TEST_SRCS)
 	@echo "list of test objects:"
