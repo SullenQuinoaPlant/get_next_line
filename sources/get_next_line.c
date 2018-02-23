@@ -56,6 +56,17 @@ static int	short_message(t_s_b *b_s, char **line)
 	return (0);
 }
 
+static *t_s_f get_fd_states(int fd)
+{
+	static t_s_f	mock = (t_s_f){
+		.fildes = 0,
+		.old = (t_s_b){.o_sz = 0, .over = (char[OVER_SZ]){0}},
+		.new = (t_s_b){.o_sz = 0, .over = (char[OVER_SZ]){0}}
+	}
+
+	return (&t_s_f);
+}
+
 int		get_next_line(const int fd, char **line)
 {
 	int		ret;

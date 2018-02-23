@@ -12,8 +12,8 @@ const size_t Error = ~((size_t)(0));
  * so OVER_SZ = BUFF_SZ - 1*/
 # define OVER_SZ 4
 typedef struct	s_buff_state {
-	size_t	over_sz;
-	char	leftover[BUFF_SIZE - 1];
+	size_t	o_sz;
+	char	over[OVER_SZ];
 }				t_s_b;
 
 typedef struct	s_fildes_state {
@@ -22,6 +22,6 @@ typedef struct	s_fildes_state {
 	t_s_b		new;
 }				t_s_f;
 
-static int	here_recursion(const int fd, char **line, int rank, t_s_b *s);
+int		get_next_line(const int fd, char **line);
 
 #endif
