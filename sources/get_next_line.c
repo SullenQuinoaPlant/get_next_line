@@ -24,11 +24,10 @@ static int	here_recursion(const int fd, char **line, int rank, t_s_b *s)
 		ret = here_recursion(fd, line, rank + 1, s);
 	else
 	{
-		if ((*line = malloc(rank * BUFF_SIZE + i + s->o_sz + 1)))
-		{
-			*line += rank * BUFF_SIZE + i + s->o_sz;
-			**line = '\0';
-		}
+		if (!(*line = malloc(rank * BUFF_SIZE + i + s->o_sz + 1)))
+			return (-1);
+		*line += rank * BUFF_SIZE + i + s->o_sz;
+		**line = '\0';
 		s->o_sz = count - i - 1;
 		ft_memcpy(s->over + OVER_SZ - s->o_sz, h_buff + i + 1, s->o_sz);
 	}
