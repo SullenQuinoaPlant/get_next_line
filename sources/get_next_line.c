@@ -17,23 +17,17 @@ static int	here_recursion(const int fd, char **line, int rank, t_s_f *s)
 	size_t	i;
 	int		ret;
 
-	count = read(fd, h_buff, BUFF_SIZE);
-	if (count == Error)
-	{
-		perror(strerror(errno));
+	if ((count = read(fd, h_buff, BUFF_SIZE)) == Error)
 		return (-1);
-	}
-	ret = count < BUFF_SIZE ? 0 : 1;
 	i = 0;
 	while (i < count && h_buff[i] != EOL)
 		i++;
+	ret = -1;
 	if (i == BUFF_SIZE)
 		ret = here_recursion(fd, line, rank + 1, s);
-	else
+	else if ((*line = malloc(rank * BUFF_SIZE + i + s->old.o_sz + 1)))
 	{
-		if (!(*line = malloc(rank * BUFF_SIZE + i + s->old.o_sz + 1)))
-			ret = -1;
-		edge(h_buff, i, count, s);
+		ret = edge(h_buff, i, count, s);
 		*line += rank * BUFF_SIZE + i + s->old.o_sz;
 		**line = '\0';
 	}
