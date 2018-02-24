@@ -4,35 +4,42 @@
 #include <errno.h>
 #include <string.h>
 
-static int	here_recursion(const int fd, char **line, int rank, t_s_b *s)
+static void	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
+{
+	s->new.o_sz = count == i ? 0 : count - i - 1;
+	ft_memcpy(s->new.over + OVER_SZ - s->new.o_sz, h_buff + i + 1, s->new.o_sz);
+}
+
+static int	here_recursion(const int fd, char **line, int rank, t_s_f *s)
 {
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
 	size_t	i;
 	int		ret;
 
-	if ((count = read(fd, h_buff, BUFF_SIZE) == Error))
+	count = read(fd, h_buff, BUFF_SIZE);
+	if (count == Error)
 	{
 		perror(strerror(errno));
 		return (-1);
 	}
-	ret = !!count;
+	ret = count < BUFF_SIZE ? 0 : 1;
 	i = 0;
 	while (i < count && h_buff[i] != EOL)
 		i++;
 	if (i == BUFF_SIZE)
 		ret = here_recursion(fd, line, rank + 1, s);
-	else if(i)
+	else
 	{
-		if (!(*line = malloc(rank * BUFF_SIZE + i + s->o_sz + 1)))
-			return (-1);
-		*line += rank * BUFF_SIZE + i + s->o_sz;
+		if (!(*line = malloc(rank * BUFF_SIZE + i + s->old.o_sz + 1)))
+			ret = -1;
+		edge(h_buff, i, count, s);
+		*line += rank * BUFF_SIZE + i + s->old.o_sz;
 		**line = '\0';
-		s->o_sz = count == i ? 0 : count - i - 1;
-		ft_memcpy(s->over + OVER_SZ - s->o_sz, h_buff + i + 1, s->o_sz);
 	}
-	while (i--)
-		*--(*line) = h_buff[i];
+	if (ret != -1)
+		while (i--)
+			*--(*line) = h_buff[i];
 	return (ret);
 }
 
@@ -81,7 +88,7 @@ int		get_next_line(const int fd, char **line)
 
 	if ((fd_states = get_fd_states(fd)) &&
 		!(ret = short_message(&fd_states->old, line)) &&
-		(ret = here_recursion(fd, line, 0, &(fd_states->new))) != -1)
+		(ret = here_recursion(fd, line, 0, fd_states)) != -1)
 	{
 		i = 0;
 		while (i++ < fd_states->old.o_sz)

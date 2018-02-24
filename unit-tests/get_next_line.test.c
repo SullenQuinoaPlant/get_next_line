@@ -41,6 +41,7 @@ int		main(int ac, char *av[])
 		int		ret;
 
 		ret = get_next_line(-1, &line);
+		free(line);
 		printf("\n");
 		assert_int_equal(ret, -1);
 	)
@@ -56,6 +57,7 @@ int		main(int ac, char *av[])
 		{
 			ret = get_next_line(bad_fd, &line);
 			assert_int_equal(ret, -1);
+			free(line);
 			printf("\n");
 		}
 		else
@@ -69,17 +71,64 @@ int		main(int ac, char *av[])
 
 		strncpy(f_path + f_name_off, "/dummy_file", f_name_sz);
 		printf("file path to open : %s\n", f_path);
-		fd = open(f_path, O_RDONLY);
-		char buff[1000] = {0};
-		ssize_t	count = read(fd, buff, 999);
-		printf("read from file : %s\n", buff);
-		close(fd);
 		if ((fd = open(f_path, O_RDONLY)) != -1)
 		{
 			ret = get_next_line(fd, &line);
-			assert_int_equal(ret, 0);
 			printf("line: %s\n", line);
+			free(line);
+			line = 0;
 			close(fd);
+			assert_int_equal(ret, 0);
+		}
+		else
+		{
+			printf("fildes not opened\n");
+			fail();
+		}
+	)
+
+	T(dummy_file_2,
+		char	*line;
+		int		ret;
+		int		fd;
+
+		strncpy(f_path + f_name_off, "/dummy_file_2", f_name_sz);
+		printf("file path to open : %s\n", f_path);
+		if ((fd = open(f_path, O_RDONLY)) != -1)
+		{
+			ret = get_next_line(fd, &line);
+			printf("line: %s\n", line);
+			free(line);
+			line = 0;
+			close(fd);
+			assert_int_equal(ret, 1);
+		}
+		else
+		{
+			printf("fildes not opened\n");
+			fail();
+		}
+	)
+
+	T(dummy_file_2_to_end,
+		char	*line;
+		int		ret;
+		int		fd;
+
+		strncpy(f_path + f_name_off, "/dummy_file_2", f_name_sz);
+		printf("file path to open : %s\n", f_path);
+		if ((fd = open(f_path, O_RDONLY)) != -1)
+		{
+			ret = 1;
+			while (ret == 1)
+			{
+				ret = get_next_line(fd, &line);
+				printf("line: %s\n", line);
+				free(line);
+				line = 0;
+			}
+			close(fd);
+			assert_int_equal(ret, 0);
 		}
 		else
 		{
@@ -97,11 +146,14 @@ int		main(int ac, char *av[])
 		{
 			if ((ret = get_next_line(0, &line)) == -1 || count > MAX_1)
 			{
-				printf("error %d in get_next_line\n", errno);
+				if (ret == -1)
+					printf("error %d in get_next_line\n", errno);
 				break;
 			}
 			count++;
 			printf("line %d : %s\n", count, line);	
+			free(line);
+			line = 0;
 		}
 	)
 	return (run_test_arr(ac, av));
