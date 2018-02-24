@@ -72,13 +72,13 @@ static int		run_test_arr(int ac, char *av[])
 			)
 		);
 	}
-	else
+	else if (ac > 2)
 	{
 		int		i;
 		int		test_index;
 		int		ret_value;
 
-		i = 0;
+		i = 1;
 		ret_value = 0;
 		while (++i < ac)
 		{

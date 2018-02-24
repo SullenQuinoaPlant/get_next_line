@@ -21,8 +21,8 @@ int		main(int ac, char *av[])
 
 	if (ac < 2)
 	{
-		printf("test suite requires path to test directory as\
-				first argument\n");
+		printf("test suite requires path to test directory as "
+				"first argument\n");
 		return (1);
 	}
 	else
