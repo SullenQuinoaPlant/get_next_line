@@ -22,13 +22,13 @@ static int	here_recursion(const int fd, char **line, int rank, t_s_b *s)
 		i++;
 	if (i == BUFF_SIZE)
 		ret = here_recursion(fd, line, rank + 1, s);
-	else
+	else if(i)
 	{
 		if (!(*line = malloc(rank * BUFF_SIZE + i + s->o_sz + 1)))
 			return (-1);
 		*line += rank * BUFF_SIZE + i + s->o_sz;
 		**line = '\0';
-		s->o_sz = count - i - 1;
+		s->o_sz = count == i ? 0 : count - i - 1;
 		ft_memcpy(s->over + OVER_SZ - s->o_sz, h_buff + i + 1, s->o_sz);
 	}
 	while (i--)
@@ -61,13 +61,13 @@ static int	short_message(t_s_b *b_s, char **line)
 
 static t_s_f *get_fd_states(int fd)
 {
-	static t_s_f	mock = {
-		.fildes = 0,
+	static t_s_f	stem = {
 		.old = (t_s_b){.o_sz = 0, .over = {0}},
 		.new = (t_s_b){.o_sz = 0, .over = {0}}
 	};
 
-	return (&mock);
+	stem.fildes = fd;
+	return (&stem);
 }
 
 int		get_next_line(const int fd, char **line)
@@ -76,8 +76,8 @@ int		get_next_line(const int fd, char **line)
 	t_s_f	*fd_states;
 	size_t	i;
 
-	fd_states = get_fd_states(fd);
-	if (!(ret = short_message(&fd_states->old, line)) &&
+	if ((fd_states = get_fd_states(fd)) &&
+		!(ret = short_message(&fd_states->old, line)) &&
 		(ret = here_recursion(fd, line, 0, &(fd_states->new))) != -1)
 	{
 		i = 0;

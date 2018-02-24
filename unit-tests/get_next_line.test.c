@@ -10,7 +10,7 @@
 #define HOW_MANY_TESTS 10
 #include "cmocka/my_macro_overlay.h"
 
-#define MAX_1 20
+#define MAX_1 10
 #define	PATH_SZ 1024
 
 int		main(int ac, char *av[])
@@ -68,8 +68,13 @@ int		main(int ac, char *av[])
 		int		fd;
 
 		strncpy(f_path + f_name_off, "/dummy_file", f_name_sz);
+		printf("file path to open : %s\n", f_path);
 		fd = open(f_path, O_RDONLY);
-		if ((fd = open("dummy_file", O_RDONLY)) != -1)
+		char buff[1000] = {0};
+		ssize_t	count = read(fd, buff, 999);
+		printf("read from file : %s\n", buff);
+		close(fd);
+		if ((fd = open(f_path, O_RDONLY)) != -1)
 		{
 			ret = get_next_line(fd, &line);
 			assert_int_equal(ret, 0);

@@ -17,7 +17,8 @@ typedef struct	s_buff_state {
 }				t_s_b;
 
 typedef struct	s_fildes_state {
-	int const	fildes;
+//	int const	fildes;
+	int			fildes;//whilst get_fd_states isn't written
 	t_s_b		old;
 	t_s_b		new;
 }				t_s_f;
