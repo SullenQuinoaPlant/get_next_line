@@ -44,6 +44,7 @@ static int	short_message(t_s_b *b_s, char **line)
 	i = OVER_SZ - b_s->o_sz;
 	ii = i;
 	while (i < OVER_SZ)
+	{
 		if (b_s->over[i] == EOL)
 		{
 			if ((*line = malloc(i - ii + 1)))
@@ -56,6 +57,8 @@ static int	short_message(t_s_b *b_s, char **line)
 			}
 			return (-1);
 		}
+		i++;
+	}
 	return (0);
 }
 
