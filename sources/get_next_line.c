@@ -16,25 +16,24 @@ static int	here_recursion(const int fd, char **line, int rank, t_s_b *s)
 		perror(strerror(errno));
 		return (-1);
 	}
+	ret = !!count;
 	i = 0;
-	while (i < count && h_buff[i++] != EOL)
-		;
-	if (i == BUFF_SIZE && h_buff[i - 1] != EOL)
+	while (i < count && h_buff[i] != EOL)
+		i++;
+	if (i == BUFF_SIZE)
 		ret = here_recursion(fd, line, rank + 1, s);
 	else
 	{
-		if ((*line = malloc(rank * BUFF_SIZE + i + s->o_sz)))
+		if ((*line = malloc(rank * BUFF_SIZE + i + s->o_sz + 1)))
 		{
-			ret = 0;
-			*line += rank * BUFF_SIZE + i + s->o_sz - 1;
+			*line += rank * BUFF_SIZE + i + s->o_sz;
 			**line = '\0';
 		}
-		s->o_sz = count - i;
-		ft_memcpy(s->over + OVER_SZ - s->o_sz, h_buff + i, s->o_sz);
+		s->o_sz = count - i - 1;
+		ft_memcpy(s->over + OVER_SZ - s->o_sz, h_buff + i + 1, s->o_sz);
 	}
-	if (ret >= 0)
-		while (--i)
-			*--(*line) = h_buff[i - 1];
+	while (i--)
+		*--(*line) = h_buff[i];
 	return (ret);
 }
 

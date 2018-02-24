@@ -41,7 +41,7 @@ cmocka :
 		cp $(UTEST_DIR)/cmocka/cmocka.h $(LIBS_I)/;\
 	fi
 
-$(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c $(SRC_DIR)/%.c
+%.test.o $(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS)\
 		-I $(LIBS_I) -I $(SRC_DIR)\
 		-D main=testee_main\
@@ -77,7 +77,7 @@ $(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c $(SRC_DIR)/%.c
 run_tests : $(EXECUTION_STAMPS)
 
 %.execution.stamp : %.build.stamp
-	./$*.o
+	./$*.o "$$(readlink -e $(UTEST_DIR))"
 	touch $@
 
 %.build.stamp :

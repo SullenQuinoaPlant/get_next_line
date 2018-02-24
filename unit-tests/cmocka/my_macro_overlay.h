@@ -63,7 +63,7 @@ static int		search_test_arr(const char *search_for)
 
 static int		run_test_arr(int ac, char *av[])
 {
-	if (ac == 1)
+	if (ac == 2)
 	{
 	    return (
 			_cmocka_run_group_tests(
