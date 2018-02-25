@@ -14,6 +14,7 @@ script:
  - make unit-tests < ./sources/get_next_line.c
  - make clean-gnl
  - ls -R1 ./gnl
+ - export CPATH="$(pwd)/gnl/libft"
  - bash ~/42FileChecker/42FileChecker.sh --project "gnl" --path "$(pwd)/gnl" --no-norminette
  - cat ~/42FileChecker/.my*
 
