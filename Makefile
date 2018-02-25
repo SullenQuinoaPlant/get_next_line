@@ -28,7 +28,7 @@ include unit-tests/Makefile
 
 OUT = gnl
 clean-gnl :
-	if ! [ -d get_next_line ]; then mkdir $(OUT); fi
+	if ! [ -d $(OUT) ]; then mkdir $(OUT); fi
 	cp auteur $(OUT)/
 	git clone -b the_lib --single-branch https://github.com/SullenQuinoaPlant/Libft.git $(OUT)/libft
 	cp $(SRC_DIR)/get_next_line.c $(OUT)/
