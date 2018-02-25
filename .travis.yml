@@ -5,7 +5,6 @@ install:
  - LIBS_I="$INSTALL_HERE""/includes"
  - LIBS_L="$INSTALL_HERE""/objects"
  - . .travis/install_cmocka.sh
- - echo "installed :"
  - ls -R $INSTALL_HERE
 script:
  - make

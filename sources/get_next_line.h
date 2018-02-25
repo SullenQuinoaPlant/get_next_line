@@ -19,7 +19,7 @@ typedef struct	s_buff_state {
 # define CLOSE -1
 # define STEM -2
 typedef struct	s_fildes_state {
-	int const	fildes;
+	int 		fildes;
 	t_s_b		old;
 	t_s_b		new;
 }				t_s_f;
