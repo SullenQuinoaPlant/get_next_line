@@ -16,7 +16,10 @@ static int	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 		s->new.o_sz = count == i ? 0 : count - i - 1;
 		ft_memcpy(s->new.over + OVER_SZ - s->new.o_sz, h_buff + i + 1, s->new.o_sz);
 	}
-	return (s->new.o_sz ? 1 : 0);
+	if (s->new.o_sz)
+		return (1);
+	s->fildes = CLOSE;
+	return (0);
 }
 
 static int	here_recursion(char **line, int rank, t_s_f *s)
@@ -81,7 +84,9 @@ static t_s_f	*get_fd_states(int fd)
 	
 	if (fd == CLOSE)
 	{
+		printf("going to shut down\n");
 		ft_lstdel(&top.next, 0);
+		printf("shat down");
 		return (0);
 	}
 	iter = &top;
@@ -102,13 +107,12 @@ static t_s_f	*get_fd_states(int fd)
 
 //static t_s_f *get_fd_states(int fd)
 //{
-//	static t_s_f	stem = {
-//		.old = (t_s_b){.o_sz = 0, .over = {0}},
-//		.new = (t_s_b){.o_sz = 0, .over = {0}}
-//	};
+//	static t_s_f	array[A_LOT];
 //
-//	stem.fildes = fd;
-//	return (&stem);
+//	if (fd >= 0)
+//		array[fd].fildes = fd;
+//		return (&array[fd]);
+//	return (0);
 //}
 
 int		get_next_line(const int fd, char **line)
@@ -127,7 +131,7 @@ int		get_next_line(const int fd, char **line)
 			*--(*line) = fd_states->old.over[OVER_SZ - i];
 		fd_states->old = fd_states->new;
 	}
-	else
+	else if (ret == -1)
 		*line = malloc(0);
 	return (ret);
 }

@@ -24,6 +24,8 @@ typedef struct	s_fildes_state {
 	t_s_b		new;
 }				t_s_f;
 
+# define A_LOT 500
+
 int		get_next_line(const int fd, char **line);
 
 #endif

@@ -35,6 +35,11 @@ size_t				test_index = 0;
 		test_code\
 	};TEST_ARR[test_index++] = (struct CMUnitTest)cmocka_unit_test(test_name);
 
+# define T_D(test_name, tear_down, test_code) \
+	void	test_name(void* *state) {\
+		test_code\
+	};TEST_ARR[test_index++] = (struct CMUnitTest)cmocka_unit_test_teardown(test_name, tear_down);
+
 
 
 static int		search_test_arr_by_name(const char *t_name)

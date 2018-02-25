@@ -32,11 +32,20 @@ int		main(int ac, char *av[])
 		f_name_sz = PATH_SZ - f_name_off - 1;
 	}
 
+	int	td(void * *state)
+	{
+		char	*placeholder;
+
+		get_next_line(-1, &placeholder);
+		free(placeholder);
+		return (0);
+	}
+
 	T(nop,
 		(void)state;
 	)
 
-	T(bad_fildes_1,
+	T_D(bad_fildes_1, td,
 		char	*line;
 		int		ret;
 
@@ -46,7 +55,7 @@ int		main(int ac, char *av[])
 		assert_int_equal(ret, -1);
 	)
 
-	T(bad_fildes_2,
+	T_D(bad_fildes_2, td,
 		char	*line;
 		int		ret;
 		int		bad_fd;
@@ -64,7 +73,7 @@ int		main(int ac, char *av[])
 			fail();
 	)
 
-	T(dummy_file,
+	T_D(dummy_file, td,
 		char	*line;
 		int		ret;
 		int		fd;
@@ -87,7 +96,7 @@ int		main(int ac, char *av[])
 		}
 	)
 
-	T(dummy_file_2,
+	T_D(dummy_file_2, td,
 		char	*line;
 		int		ret;
 		int		fd;
@@ -110,7 +119,7 @@ int		main(int ac, char *av[])
 		}
 	)
 
-	T(dummy_file_2_to_end,
+	T_D(dummy_file_2_to_end, td,
 		char	*line;
 		int		ret;
 		int		fd;
@@ -137,7 +146,7 @@ int		main(int ac, char *av[])
 		}
 	)
 	
-	T(while_1,
+	T_D(while_1, td,
 		char	*line;
 		int		count;
 		int		ret;
