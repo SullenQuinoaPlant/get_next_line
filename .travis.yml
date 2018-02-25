@@ -10,4 +10,5 @@ install:
 script:
  - make
  - make unit-tests < ./sources/get_next_line.c
- - bash ~/42FileChecker/42FileChecker.sh --project "gnl" --no-norminette
+ - make clean-gnl
+ - bash ~/42FileChecker/42FileChecker.sh --project "gnl" --path "./gnl" --no-norminette

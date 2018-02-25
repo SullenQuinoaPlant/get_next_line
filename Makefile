@@ -30,6 +30,6 @@ OUT = gnl
 clean-gnl :
 	if ! [ -d get_next_line ]; then mkdir $(GNL); fi
 	cp auteur $(OUT)/
-	cp $(LIBS_DIR)/libft $(OUT)/
+	git clone https://github.com/SullenQuinoaPlant/Libft.git $(GNL)/libft
 	cp $(SRC_DIR)/get_next_line.c $(OUT)/
 	cp $(SRC_DIR)/get_next_line.h $(OUT)/
