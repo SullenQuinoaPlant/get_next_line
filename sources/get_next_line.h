@@ -16,6 +16,7 @@ typedef struct	s_buff_state {
 	char	over[OVER_SZ];
 }				t_s_b;
 
+# define CLOSE -1
 typedef struct	s_fildes_state {
 //	int const	fildes;
 	int			fildes;//whilst get_fd_states isn't written

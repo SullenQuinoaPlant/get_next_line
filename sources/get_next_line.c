@@ -19,21 +19,21 @@ static int	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 	return (s->new.o_sz ? 1 : 0);
 }
 
-static int	here_recursion(const int fd, char **line, int rank, t_s_f *s)
+static int	here_recursion(char **line, int rank, t_s_f *s)
 {
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
 	size_t	i;
 	int		ret;
 
-	if ((count = read(fd, h_buff, BUFF_SIZE)) == Error)
+	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) == Error)
 		return (-1);
 	i = 0;
 	while (i < count && h_buff[i] != EOL)
 		i++;
 	ret = -1;
 	if (i == BUFF_SIZE)
-		ret = here_recursion(fd, line, rank + 1, s);
+		ret = here_recursion(line, rank + 1, s);
 	else if ((*line = malloc(rank * BUFF_SIZE + i + s->old.o_sz + 1)))
 	{
 		ret = edge(h_buff, i, count, s);
@@ -72,16 +72,40 @@ static int	short_message(t_s_b *b_s, char **line)
 	return (0);
 }
 
-static t_s_f *get_fd_states(int fd)
+static t_s_f	*get_fd_states(int fd)
 {
-	static t_s_f	stem = {
-		.old = (t_s_b){.o_sz = 0, .over = {0}},
-		.new = (t_s_b){.o_sz = 0, .over = {0}}
-	};
-
-	stem.fildes = fd;
-	return (&stem);
+	static t_s_f			new = {.old = {.o_sz = 0}, .new = {.o_sz = 0}};
+	static t_list const 	bottom = {.next = 0};
+	static t_list			*top = (t_list*)&bottom;
+	t_list					*iter;
+	t_list					*prev;
+	
+	iter = top;
+	while ((prev = iter) && (iter = iter->next))
+		if ((*(t_s_f*)iter->content).fildes == CLOSE)
+		{
+			prev->next = iter->next;
+			free(iter->content);
+			free(iter);
+			iter = prev->next;
+		}
+		else if ((*(t_s_f*)iter->content).fildes == fd)
+			return ((t_s_f*)iter->content);
+	new.fildes = fd;
+	ft_lstadd(&top, ft_lstnew(&new, sizeof(t_s_f)));
+	return ((t_s_f*)top->content);
 }
+
+//static t_s_f *get_fd_states(int fd)
+//{
+//	static t_s_f	stem = {
+//		.old = (t_s_b){.o_sz = 0, .over = {0}},
+//		.new = (t_s_b){.o_sz = 0, .over = {0}}
+//	};
+//
+//	stem.fildes = fd;
+//	return (&stem);
+//}
 
 int		get_next_line(const int fd, char **line)
 {
@@ -89,9 +113,10 @@ int		get_next_line(const int fd, char **line)
 	t_s_f	*fd_states;
 	size_t	i;
 
+	ret = -1;
 	if ((fd_states = get_fd_states(fd)) &&
 		!(ret = short_message(&fd_states->old, line)) &&
-		(ret = here_recursion(fd, line, 0, fd_states)) != -1)
+		(ret = here_recursion(line, 0, fd_states)) != -1)
 	{
 		i = 0;
 		while (i++ < fd_states->old.o_sz)
