@@ -17,6 +17,7 @@ typedef struct	s_buff_state {
 }				t_s_b;
 
 # define CLOSE -1
+# define STEM -2
 typedef struct	s_fildes_state {
 //	int const	fildes;
 	int			fildes;//whilst get_fd_states isn't written

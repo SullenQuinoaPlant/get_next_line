@@ -74,13 +74,12 @@ static int	short_message(t_s_b *b_s, char **line)
 
 static t_s_f	*get_fd_states(int fd)
 {
-	static t_s_f			new = {.old = {.o_sz = 0}, .new = {.o_sz = 0}};
-	static t_list const 	bottom = {.next = 0};
-	static t_list			*top = (t_list*)&bottom;
+	static t_s_f			new = {.fildes = STEM};
+	static t_list			top;
 	t_list					*iter;
 	t_list					*prev;
 	
-	iter = top;
+	iter = &top;
 	while ((prev = iter) && (iter = iter->next))
 		if ((*(t_s_f*)iter->content).fildes == CLOSE)
 		{
@@ -92,8 +91,8 @@ static t_s_f	*get_fd_states(int fd)
 		else if ((*(t_s_f*)iter->content).fildes == fd)
 			return ((t_s_f*)iter->content);
 	new.fildes = fd;
-	ft_lstadd(&top, ft_lstnew(&new, sizeof(t_s_f)));
-	return ((t_s_f*)top->content);
+	ft_lstadd(&top.next, ft_lstnew(&new, sizeof(t_s_f)));
+	return ((t_s_f*)top.next->content);
 }
 
 //static t_s_f *get_fd_states(int fd)
