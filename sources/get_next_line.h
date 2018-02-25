@@ -4,7 +4,7 @@
 # include "libft.h"
 
 # define BUFF_SIZE 5
-const size_t Error = ~((size_t)(0));
+const size_t my_Error = ~((size_t)(0));
 
 # define EOL '\n'
 

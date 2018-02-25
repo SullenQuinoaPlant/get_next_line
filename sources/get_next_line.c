@@ -8,7 +8,7 @@ static int	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 {
 	if (count == BUFF_SIZE && i + 1 == count)
 	{
-		if ((s->new.o_sz = read(s->fildes, s->new.over, OVER_SZ)) == Error)
+		if ((s->new.o_sz = read(s->fildes, s->new.over, OVER_SZ)) == my_Error)
 			return (-1);
 	}
 	else
@@ -29,7 +29,7 @@ static int	here_recursion(char **line, int rank, t_s_f *s)
 	size_t	i;
 	int		ret;
 
-	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) == Error)
+	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) == my_Error)
 		return (-1);
 	i = 0;
 	while (i < count && h_buff[i] != EOL)
