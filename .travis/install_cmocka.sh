@@ -9,8 +9,8 @@ cd ..
 	echo $LIBS_L
  	ls cmocka_download/include/cmocka.h
 	ls cmocka_build/src/libcmocka*
- 	cp cmocka_download/include/cmocka.h "$LIBS_I/"
-	cp cmocka_build/src/libcmocka* "$LIBS_L/"
+ 	mv cmocka_download/include/cmocka.h $LIBS_I
+	mv cmocka_build/src/libcmocka* $LIBS_L
 	rm -rf cmocka_download
 	rm -rf cmocka_build
 )
