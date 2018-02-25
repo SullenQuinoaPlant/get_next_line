@@ -9,5 +9,5 @@ cd ..
 	cp cmocka_build/src/libcmocka* $LIBS_L
 	rm -rf cmocka_download -v
 	rm -rf cmocka_build -v
-) &> /dev/null
+)
 echo "exiting cmocka installation script"
