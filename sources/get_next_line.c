@@ -4,10 +4,19 @@
 #include <errno.h>
 #include <string.h>
 
-static void	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
+static int	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 {
-	s->new.o_sz = count == i ? 0 : count - i - 1;
-	ft_memcpy(s->new.over + OVER_SZ - s->new.o_sz, h_buff + i + 1, s->new.o_sz);
+	if (count == BUFF_SIZE && i + 1 == count)
+	{
+		if ((s->new.o_sz = read(s->fildes, s->new.over, OVER_SZ)) == Error)
+			return (-1);
+	}
+	else
+	{
+		s->new.o_sz = count == i ? 0 : count - i - 1;
+		ft_memcpy(s->new.over + OVER_SZ - s->new.o_sz, h_buff + i + 1, s->new.o_sz);
+	}
+	return (s->new.o_sz ? 1 : 0);
 }
 
 static int	here_recursion(const int fd, char **line, int rank, t_s_f *s)
