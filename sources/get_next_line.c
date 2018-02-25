@@ -79,6 +79,11 @@ static t_s_f	*get_fd_states(int fd)
 	t_list					*iter;
 	t_list					*prev;
 	
+	if (fd == CLOSE)
+	{
+		ft_lstdel(&top.next, 0);
+		return (0);
+	}
 	iter = &top;
 	while ((prev = iter) && (iter = iter->next))
 		if ((*(t_s_f*)iter->content).fildes == CLOSE)

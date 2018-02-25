@@ -36,7 +36,7 @@ cmocka :
 			rm test.o;\
 			echo "cmocka already installed";\
 	else\
-		$(MAKE) -C $(UTEST_DIR)/cmocka/ >/dev/null;\
+		$(MAKE) -C $(UTEST_DIR)/cmocka/;\
 		cp $(UTEST_DIR)/cmocka/libcmocka* $(LIBS_L)/;\
 		cp $(UTEST_DIR)/cmocka/cmocka.h $(LIBS_I)/;\
 	fi
