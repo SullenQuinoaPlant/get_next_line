@@ -6,6 +6,8 @@ install:
  - LIBS_L="$INSTALL_HERE""/objects"
  - . .travis/install_cmocka.sh
  - ls -R $INSTALL_HERE
+ - . .travis/install_42FileChecker.sh
 script:
  - make
- - make unit-tests
+ - make unit-tests < ./sources/get_next_line.c
+ - .~/42FileChecker/42FileChecker.sh --project "gnl" --no-norminette
