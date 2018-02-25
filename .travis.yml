@@ -1,7 +1,10 @@
 language: c
 os: linux
 install:
- - INSTALL_HERE=$(pwd)/libs
+ - INSTALL_HERE="$(pwd)/libs"
+ - LIBS_I="$INSTALL_HERE""/includes"
+ - LIBS_L="$INSTALL_HERE""/objects"
+ - . .travis/install_cmocka.sh
  - echo "installed :"
  - ls -R $INSTALL_HERE
 script:
