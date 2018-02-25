@@ -16,7 +16,7 @@ CFLAGS = -Wall -Wextra -Werror
 CFLAGS_MORE =
 
 #nothing to make
-all :
+all : libft
 	@:
 
 $(NAME) : $(OBJS)

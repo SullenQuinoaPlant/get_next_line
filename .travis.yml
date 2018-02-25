@@ -2,9 +2,6 @@ language: c
 os: linux
 install:
  - INSTALL_HERE=$(pwd)/libs
- - LIBRARY_PATH=$INSTALL_HERE/lib
- - CPATH="$INSTALL_HERE/include"
- - source .travis/install_cmocka.sh
  - echo "installed :"
  - ls -R $INSTALL_HERE
 script:
