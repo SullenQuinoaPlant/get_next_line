@@ -127,5 +127,7 @@ int		get_next_line(const int fd, char **line)
 			*--(*line) = fd_states->old.over[OVER_SZ - i];
 		fd_states->old = fd_states->new;
 	}
+	else
+		*line = malloc(0);
 	return (ret);
 }
