@@ -154,7 +154,7 @@ int		main(int ac, char *av[])
 		count = 0;
 		while (1)
 		{
-			if ((ret = get_next_line(0, &line)) == -1 || count > MAX_1)
+			if (count > MAX_1 || (ret = get_next_line(0, &line)) == -1)
 			{
 				if (ret == -1)
 					printf("error %d in get_next_line\n", errno);

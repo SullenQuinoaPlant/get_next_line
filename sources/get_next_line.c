@@ -75,45 +75,58 @@ static int	short_message(t_s_b *b_s, char **line)
 	return (0);
 }
 
-static t_s_f	*get_fd_states(int fd)
-{
-	static t_s_f			new = {.fildes = STEM};
-	static t_list			top;
-	t_list					*iter;
-	t_list					*prev;
-	
-	if (fd == CLOSE)
-	{
-		printf("going to shut down\n");
-		ft_lstdel(&top.next, 0);
-		printf("shat down");
-		return (0);
-	}
-	iter = &top;
-	while ((prev = iter) && (iter = iter->next))
-		if ((*(t_s_f*)iter->content).fildes == CLOSE)
-		{
-			prev->next = iter->next;
-			free(iter->content);
-			free(iter);
-			iter = prev->next;
-		}
-		else if ((*(t_s_f*)iter->content).fildes == fd)
-			return ((t_s_f*)iter->content);
-	new.fildes = fd;
-	ft_lstadd(&top.next, ft_lstnew(&new, sizeof(t_s_f)));
-	return ((t_s_f*)top.next->content);
-}
-
-//static t_s_f *get_fd_states(int fd)
+//static t_s_f	*get_fd_states(int fd)
 //{
-//	static t_s_f	array[A_LOT];
-//
-//	if (fd >= 0)
-//		array[fd].fildes = fd;
-//		return (&array[fd]);
-//	return (0);
+//	static t_s_f			new = {.fildes = STEM};
+//	static t_list			top;
+//	t_list					*iter;
+//	t_list					*prev;
+//	
+//	if (fd == CLOSE)
+//	{
+//		void	cleanup(void *at, size_t sz)
+//		{
+//			ft_bzero(at, sz);
+//			free(at);
+//		}
+//		ft_lstdel(&top.next, &cleanup);
+//		return (0);
+//	}
+//	iter = &top;
+//	while ((prev = iter) && (iter = iter->next))
+//		if ((*(t_s_f*)iter->content).fildes == CLOSE)
+//		{
+//			prev->next = iter->next;
+//			free(iter->content);
+//			free(iter);
+//			iter = prev->next;
+//		}
+//		else if ((*(t_s_f*)iter->content).fildes == fd)
+//			return ((t_s_f*)iter->content);
+//	new.fildes = fd;
+//	ft_lstadd(&top.next, ft_lstnew(&new, sizeof(t_s_f)));
+//	return ((t_s_f*)top.next->content);
 //}
+
+static t_s_f *get_fd_states(int fd)
+{
+	const t_s_f		zero = {.fildes = CLOSE};
+	static t_s_f	array[A_LOT];
+	size_t			i;
+
+	if (fd >= 0)
+	{
+		array[fd].fildes = fd;
+		return (array + fd);
+	}
+	else if (fd == CLOSE)
+	{
+		i = 0;
+		while (i < A_LOT)
+			array[i++] = zero;
+	}
+	return (0);
+}
 
 int		get_next_line(const int fd, char **line)
 {
