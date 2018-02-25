@@ -142,6 +142,7 @@ int		main(int ac, char *av[])
 		int		count;
 		int		ret;
 
+		count = 0;
 		while (1)
 		{
 			if ((ret = get_next_line(0, &line)) == -1 || count > MAX_1)
