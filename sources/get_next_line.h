@@ -3,14 +3,12 @@
 
 # include "libft.h"
 
-# define BUFF_SIZE 5
-const size_t my_Error = ~((size_t)(0));
+# define ERROR -1
 
+# define BUFF_SIZE 5
+# define OVER_SZ BUFF_SIZE - 1
 # define EOL '\n'
 
-/*leftover can never be as big as input :
- * so OVER_SZ = BUFF_SZ - 1*/
-# define OVER_SZ 4
 typedef struct	s_buff_state {
 	size_t	o_sz;
 	char	over[OVER_SZ];
