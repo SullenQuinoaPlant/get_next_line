@@ -110,7 +110,6 @@ static int	short_message(t_s_b *b_s, char **line)
 
 static t_s_f *get_fd_states(int fd)
 {
-	const t_s_f		zero = {.fildes = CLOSE};
 	static t_s_f	array[A_LOT];
 	size_t			i;
 
