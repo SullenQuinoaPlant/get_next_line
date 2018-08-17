@@ -120,9 +120,9 @@ static t_s_f *get_fd_states(int fd)
 	}
 	else if (fd == CLOSE)
 	{
-		i = 0;
-		while (i < A_LOT)
-			array[i++] = zero;
+		i = -1;
+		while (++i < A_LOT)
+			ft_bzero(array + i, sizeof(t_s_f);
 	}
 	return (0);
 }
