@@ -122,7 +122,7 @@ static t_s_f *get_fd_states(int fd)
 	{
 		i = -1;
 		while (++i < A_LOT)
-			ft_bzero(array + i, sizeof(t_s_f);
+			ft_bzero(array + i, sizeof(t_s_f));
 	}
 	return (0);
 }
