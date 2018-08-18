@@ -9,7 +9,7 @@ all : $(LIBNAME)
 $(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
 	ar rcs $@.a $<
 	mv $@.a $(LIBS_L)/
-	mv $(SRC_DIR)/$(TARGET).h $(LIBS_I)/
+	mv $(SRC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
 
 $(OBJ_DIR)/$(TARGET).o :
 	$(CC) $(CFLAGS) $(CFLAGS_MORE)\

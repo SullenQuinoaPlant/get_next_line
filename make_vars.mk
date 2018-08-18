@@ -3,7 +3,7 @@ ifndef ROOT
 endif
 
 NAME = getnextline
-LIBNAME = LIB$(NAME)
+LIBNAME = lib$(NAME)
 TARGET = get_next_line
 
 SRC_DIR	:= $(ROOT)/sources
