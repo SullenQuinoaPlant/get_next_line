@@ -15,7 +15,7 @@ $(OBJ_DIR)/$(TARGET).o :
 	$(CC) $(CFLAGS) $(CFLAGS_MORE)\
 		-I $(LIBS_I)\
 		-o $@\
-		$(SRC_DIR)/$(TARGET).c
+		-c $(SRC_DIR)/$(TARGET).c
 
 clean :
 	-rm $(OBJ_DIR)/$(TARGET).o
