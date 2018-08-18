@@ -1,33 +1,27 @@
-NAME =
-TARGETS =
-
-OBJ = ./objects
-SRC = ./sources
-
-OBJS := $(patsubst %,$(OBJ)/%.o,$(TARGETS))
-
 ifndef ROOT
 	LIB_DIR = ./libs/objects
 	LIB_H_DIR  = ./libs/includes
 endif
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-CFLAGS_MORE =
-
 #nothing to make
-all : libft
-	@:
+all : $(LIBNAME)
 
-$(NAME) : $(OBJS)
+$(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
+	ar rcs $@.a $<
+	mv $@.a $(LIBS_L)/
+	mv $(SRC_DIR)/$(TARGET).h $(LIBS_I)/
+
+$(OBJ_DIR)/$(TARGET).o :
 	$(CC) $(CFLAGS) $(CFLAGS_MORE)\
-		-o $(NAME) $(OBJS)
+		-o $@\
+		$(SRC_DIR)/$(TARGET).c
 
 clean :
-	-rm $(OBJS)
+	-rm $(OBJ_DIR)/$(TARGET).o
 
 fclean : clean
-	-rm $(NAME)
+	-rm $(LIBS_L)/$(LIBNAME).a
+	-rm $(LIBS_I)/$(LIBNAME).h
 
 re : fclean all
 

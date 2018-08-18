@@ -1,4 +1,7 @@
-include make_vars.mk
+ifndef ROOT
+	ROOT := .
+	include $(ROOT)/make_vars.mk
+endif
 
 
 #######
@@ -6,10 +9,6 @@ include make_vars.mk
 
 include Makefile.mk
 
-
-
-
-include make_vars.mk
 
 #######
 #LIBS :
@@ -20,16 +19,3 @@ include libs/Makefile
 #TESTS :
 
 include unit-tests/Makefile
-
-
-
-#########
-#OUTPUT :
-
-OUT = gnl
-clean-gnl :
-	if ! [ -d $(OUT) ]; then mkdir $(OUT); fi
-	cp auteur $(OUT)/
-	git clone -b the_lib --single-branch https://github.com/SullenQuinoaPlant/Libft.git $(OUT)/libft
-	cp $(SRC_DIR)/get_next_line.c $(OUT)/
-	cp $(SRC_DIR)/get_next_line.h $(OUT)/
