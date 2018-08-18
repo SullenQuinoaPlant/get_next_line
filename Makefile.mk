@@ -13,6 +13,7 @@ $(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
 
 $(OBJ_DIR)/$(TARGET).o :
 	$(CC) $(CFLAGS) $(CFLAGS_MORE)\
+		-I $(LIBS_I)\
 		-o $@\
 		$(SRC_DIR)/$(TARGET).c
 
