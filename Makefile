@@ -34,3 +34,4 @@ release:
 		cp $(ROOT)/Makefile.mk $(ROOT)/$@/Makefile
 		cp $(ROOT)/make_vars_release.mk $(ROOT)/$@/make_vars.mk
 		cp $(LIBS_I)/libft.h $(ROOT)/$@/
+		FINISH THIS
