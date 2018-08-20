@@ -1,15 +1,14 @@
 ifndef ROOT
-	LIB_DIR = ./libs/objects
-	LIB_H_DIR  = ./libs/includes
+	ROOT = .
+	include make_vars.mk
 endif
 
-#nothing to make
 all : $(LIBNAME)
 
 $(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
 	ar rcs $@.a $<
 	mv $@.a $(LIBS_L)/
-	mv $(SRC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
+	cp $(SRC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
 
 $(OBJ_DIR)/$(TARGET).o :
 	$(CC) $(CFLAGS) $(CFLAGS_MORE)\

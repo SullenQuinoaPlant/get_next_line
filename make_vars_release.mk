@@ -1,0 +1,13 @@
+NAME = getnextline
+LIBNAME = lib$(NAME)
+TARGET = get_next_line
+
+SRC_DIR	:= $(ROOT)/sources
+OBJ_DIR := $(ROOT)/sources
+LIB_DIR := $(ROOT)
+LIBS_L := $(LIB_DIR)
+LIBS_I := $(LIB_DIR)
+
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror
+CFLAGS_MORE =
