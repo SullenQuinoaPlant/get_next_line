@@ -11,8 +11,7 @@ $(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
 	cp $(SRC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
 
 $(OBJ_DIR)/$(TARGET).o :
-	$(CC) $(CFLAGS) $(CFLAGS_MORE)\
-		-I $(LIBS_I)\
+	$(CC) $(CFLAGS)\
 		-o $@\
 		-c $(SRC_DIR)/$(TARGET).c
 

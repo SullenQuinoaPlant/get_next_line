@@ -3,7 +3,6 @@ ifndef ROOT
 	include $(ROOT)/make_vars.mk
 endif
 
-BUILD_DIR = oaeuhtns
 
 nop :
 	@:

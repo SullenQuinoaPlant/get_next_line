@@ -9,5 +9,5 @@ LIBS_L := $(LIB_DIR)
 LIBS_I := $(LIB_DIR)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
 CFLAGS_MORE =
+CFLAGS := -Wall -Wextra -Werror $(CFLAGS_MORE)
