@@ -23,6 +23,7 @@ include unit-tests/Makefile
 
 ########
 #RELEASE
+.PHONY : release
 release:
 	git clone\
 		--depth 1 --single-branch\
@@ -33,5 +34,5 @@ release:
 	cp -rf $(ROOT)/sources/ $(ROOT)/$@
 	cp $(ROOT)/Makefile.mk $(ROOT)/$@/Makefile
 	cp $(ROOT)/make_vars_release.mk $(ROOT)/$@/make_vars.mk
-	cp $(LIBS_I)/libft.h $(ROOT)/$@/
+	cp $(LIBS_I)/libft.h $(ROOT)/$@/sources/
 	cd $(ROOT)/$@ && git add * && git commit -m i && git push

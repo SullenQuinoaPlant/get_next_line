@@ -10,13 +10,12 @@ nop :
 
 
 libft : $(LIBS_I)/libft.h $(LIBS_L)/libft.a
-	-rm -rf $(BUILD_DIR)
-	git clone https://github.com/SullenQuinoaPlant/Libft.git $(BUILD_DIR)/
-	make -C $(BUILD_DIR)/
-	cp $(BUILD_DIR)/libft.a $(LIBS_L)
-	cp $(BUILD_DIR)/libft.h $(LIBS_I)
-	rm -rf $(BUILD_DIR)
-	touch libft
+	git clone\
+		--single-branch -b the_lib\
+		--depth 1\
+		https://github.com/SullenQuinoaPlant/Libft.git\
+		$(LIB_DIR)/$@
+	cp $(LIB_DIR)/$@/libft.h $(LIBS_I)/
 
 $(LIBS_I)/libft.h :
 	@:
