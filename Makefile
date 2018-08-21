@@ -29,9 +29,9 @@ release:
 		-b release\
 		https://github.com/SullenQuinoaPlant/get_next_line.git\
 		$(ROOT)/$@/
-		cp $(ROOT)/auteur $(ROOT)/$@
-		cp -rf $(ROOT)/sources/ $(ROOT)/$@
-		cp $(ROOT)/Makefile.mk $(ROOT)/$@/Makefile
-		cp $(ROOT)/make_vars_release.mk $(ROOT)/$@/make_vars.mk
-		cp $(LIBS_I)/libft.h $(ROOT)/$@/
-		FINISH THIS
+	cp $(ROOT)/auteur $(ROOT)/$@
+	cp -rf $(ROOT)/sources/ $(ROOT)/$@
+	cp $(ROOT)/Makefile.mk $(ROOT)/$@/Makefile
+	cp $(ROOT)/make_vars_release.mk $(ROOT)/$@/make_vars.mk
+	cp $(LIBS_I)/libft.h $(ROOT)/$@/
+	cd $(ROOT)/$@ && git add * && git commit -m i && git push
