@@ -3,7 +3,7 @@
 
 # include "libft.h"
 
-# define ERROR -1
+# define ERROR ~((size_t)0)
 
 # define BUFF_SIZE 5
 # define OVER_SZ BUFF_SIZE - 1
