@@ -24,7 +24,7 @@ unit-tests ut : list_tests build_tests run_tests
 .PHONY : alone
 alone :
 	gcc -I ../sources -I ../libs/includes -L ../libs/objects\
-		test.c -lft
+		test.c -lft -g
 
 ############
 #BUILD TESTS
