@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
+/*   Updated: 2018/08/28 03:55:31 by nmauvari         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 #include <stdio.h>
@@ -130,18 +142,18 @@ static t_s_f *get_fd_states(int fd)
 int		get_next_line(const int fd, char **line)
 {
 	int		ret;
-	t_s_f	*fd_states;
+	t_s_f	*fd_state;
 	size_t	i;
 
 	ret = -1;
-	if ((fd_states = get_fd_states(fd)) &&
-		!(ret = short_message(&fd_states->old, line)) &&
-		(ret = here_recursion(line, 0, fd_states)) != -1)
+	if ((fd_state = get_fd_states(fd)) &&
+		!(ret = short_message(&fd_state->old, line)) &&
+		(ret = here_recursion(line, 0, fd_state)) != -1)
 	{
 		i = 0;
-		while (i++ < fd_states->old.o_sz)
-			*--(*line) = fd_states->old.over[OVER_SZ - i];
-		fd_states->old = fd_states->new;
+		while (i++ < fd_state->old.o_sz)
+			*--(*line) = fd_state->old.over[OVER_SZ - i];
+		fd_state->old = fd_state->new;
 	}
 	else if (ret == -1)
 		*line = malloc(0);
