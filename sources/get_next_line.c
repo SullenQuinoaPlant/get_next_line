@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/08/28 03:55:31 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/08/28 04:19:40 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 	return (0);
 }
 
-static int	here_recursion(char **line, int rank, t_s_f *s)
+static int	read_line(char **line, int rank, t_s_f *s)
 {
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
@@ -48,7 +48,7 @@ static int	here_recursion(char **line, int rank, t_s_f *s)
 		i++;
 	ret = -1;
 	if (i == BUFF_SIZE)
-		ret = here_recursion(line, rank + 1, s);
+		ret = read_line(line, rank + 1, s);
 	else if ((*line = malloc(rank * BUFF_SIZE + i + s->old.o_sz + 1)))
 	{
 		ret = edge(h_buff, i, count, s);
@@ -61,7 +61,7 @@ static int	here_recursion(char **line, int rank, t_s_f *s)
 	return (ret);
 }
 
-static int	short_message(t_s_b *b_s, char **line)
+static int	known_smallline(t_s_b *b_s, char **line)
 {
 	size_t	i;
 	size_t	ii;
@@ -147,8 +147,8 @@ int		get_next_line(const int fd, char **line)
 
 	ret = -1;
 	if ((fd_state = get_fd_states(fd)) &&
-		!(ret = short_message(&fd_state->old, line)) &&
-		(ret = here_recursion(line, 0, fd_state)) != -1)
+		!(ret = known_smallline(&fd_state->old, line)) &&
+		(ret = read_line(line, 0, fd_state)) != -1)
 	{
 		i = 0;
 		while (i++ < fd_state->old.o_sz)
