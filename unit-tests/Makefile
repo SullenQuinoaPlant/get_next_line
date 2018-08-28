@@ -19,7 +19,12 @@ CFLAGS += $(CFLAGS_MORE)
 unit-tests ut : list_tests build_tests run_tests
 
 
-
+###########
+#STANDALONE
+.PHONY : alone
+alone :
+	gcc -I ../sources -I ../libs/includes -L ../libs/objects\
+		test.c -lft
 
 ############
 #BUILD TESTS

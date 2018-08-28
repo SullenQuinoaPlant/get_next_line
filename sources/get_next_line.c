@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/08/28 04:19:40 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/08/28 05:30:36 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <errno.h>
 #include <string.h>
 
-static int	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
+static void	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 {
 	if (count == BUFF_SIZE && i + 1 == count)
 	{
