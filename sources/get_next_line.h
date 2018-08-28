@@ -20,7 +20,7 @@
 # define BUFF_SIZE 5
 # define OVER_SZ BUFF_SIZE - 1
 # define EOL '\n'
-# define UNALLOCATED ~((size_t)0)
+# define UNALLOCATED ~((char*)0)
 
 typedef struct	s_buff_state {
 	size_t	o_sz;

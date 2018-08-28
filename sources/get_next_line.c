@@ -27,7 +27,7 @@ static void	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 	}
 }
 
-static void	read_line(char **line, int rank, t_s_f *s)
+static char	*read_line(char **line, int rank, t_s_f *s)
 {
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
@@ -82,7 +82,6 @@ static int	known_smallline(t_s_b *b_s, char **line)
 static t_s_f *get_fd_states(int fd)
 {
 	static t_s_f	array[A_LOT];
-	size_t			i;
 
 	if (fd >= 0)
 	{
