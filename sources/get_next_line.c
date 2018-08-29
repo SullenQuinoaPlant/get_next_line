@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/08/28 06:30:17 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/08/29 05:51:52 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ static char	*read_line(char **line, int rank, t_s_f *s)
 			while (i--)
 				*--(*line) = h_buff[i];
 	}
+	else if (count == ERROR)
+		*line = 0;
 	return (*line);
 }
 
@@ -83,7 +85,7 @@ static t_s_f *get_fd_states(int fd)
 {
 	static t_s_f	array[A_LOT];
 
-	if (fd >= 0)
+	if (fd >= 0 && fd < A_LOT)
 	{
 		array[fd].fildes = fd;
 		return (array + fd);
@@ -98,22 +100,21 @@ int		get_next_line(const int fd, char **line)
 	size_t	i;
 
 	ret = -1;
+	if (!line)
+		return (ret);
 	*line = UNALLOCATED;
 	if ((fd_state = get_fd_states(fd)) &&
 		!(ret = known_smallline(&fd_state->old, line)) &&
-		(*line = read_line(line, 0, fd_state)))
+		(ret = read_line(line, 0, fd_state) ? 0 : -1) != -1 &&
+		*line != UNALLOCATED)
 	{
-		ret = 0;
-		if (*line != UNALLOCATED)
-		{
-			i = 0;
-			while (i++ < fd_state->old.o_sz)
-				*--(*line) = fd_state->old.over[OVER_SZ - i];
-			fd_state->old = fd_state->new;
-			ret = 1;
-		}
+		ret = 1;
+		i = 0;
+		while (i++ < fd_state->old.o_sz)
+			*--(*line) = fd_state->old.over[OVER_SZ - i];
+		fd_state->old = fd_state->new;
 	}
 	else
-		*line = malloc(0);
+		*line = 0;
 	return (ret);
 }
