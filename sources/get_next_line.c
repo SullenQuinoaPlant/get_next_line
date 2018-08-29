@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/08/29 05:51:52 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/08/29 08:24:20 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,13 +108,12 @@ int		get_next_line(const int fd, char **line)
 		(ret = read_line(line, 0, fd_state) ? 0 : -1) != -1 &&
 		*line != UNALLOCATED)
 	{
-		ret = 1;
 		i = 0;
 		while (i++ < fd_state->old.o_sz)
 			*--(*line) = fd_state->old.over[OVER_SZ - i];
 		fd_state->old = fd_state->new;
+		return (1);
 	}
-	else
-		*line = 0;
+	*line = 0;
 	return (ret);
 }
