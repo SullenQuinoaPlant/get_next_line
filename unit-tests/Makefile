@@ -110,3 +110,9 @@ list_tests :
 	@echo $(TEST_SRCS)
 	@echo "list of test objects:"
 	@echo $(TEST_OBJS)
+
+test.o : test.c
+	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
+		test.c\
+		-lft\
+		-o $@

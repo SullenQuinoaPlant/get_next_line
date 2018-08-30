@@ -84,8 +84,9 @@ static int	known_smallline(t_s_b *b_s, char **line)
 static t_s_f *get_fd_states(int fd)
 {
 	static t_s_f	array[A_LOT];
+	char		c;
 
-	if (fd >= 0 && fd < A_LOT)
+	if (fd >= 0 && fd < A_LOT && !read(fd, &c, 0))
 	{
 		array[fd].fildes = fd;
 		return (array + fd);
@@ -112,8 +113,9 @@ int		get_next_line(const int fd, char **line)
 		while (i++ < fd_state->old.o_sz)
 			*--(*line) = fd_state->old.over[OVER_SZ - i];
 		fd_state->old = fd_state->new;
-		return (1);
+		ret = 1;
 	}
-	*line = 0;
+	else
+		*line = 0;
 	return (ret);
 }
