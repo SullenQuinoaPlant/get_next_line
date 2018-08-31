@@ -116,3 +116,9 @@ test.o : test.c
 		test.c\
 		-lft\
 		-o $@
+
+test_simple.o : test_simple.c
+	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
+		$<\
+		-lft\
+		-o $@

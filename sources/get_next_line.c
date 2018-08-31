@@ -59,6 +59,7 @@ static int	known_smallline(t_s_b *b_s, char **line)
 {
 	size_t	i;
 	size_t	ii;
+	size_t	smallline_sz;
 
 	i = OVER_SZ - b_s->o_sz;
 	ii = i;
@@ -66,12 +67,13 @@ static int	known_smallline(t_s_b *b_s, char **line)
 	{
 		if (b_s->over[i] == EOL)
 		{
-			if ((*line = malloc(i - ii + 1)))
+			smallline_sz = i - ii + 1;
+			if ((*line = malloc(smallline_sz)))
 			{
-				b_s->o_sz -= i - ii + 1;
-				(*line)[i - ii] = '\0';
-				while (i-- != ii)
-					(*line)[i - ii] = b_s->over[i];
+				b_s->o_sz -= smallline_sz;
+				(*line)[--smallline_sz] = '\0';
+				while (smallline_sz--)
+					(*line)[smallline_sz] = b_s->over[--i];
 				return (1);
 			}
 			return (-1);
@@ -115,7 +117,7 @@ int		get_next_line(const int fd, char **line)
 		fd_state->old = fd_state->new;
 		ret = 1;
 	}
-	else
+	else if (*line = UNALLOCATED)
 		*line = 0;
 	return (ret);
 }
