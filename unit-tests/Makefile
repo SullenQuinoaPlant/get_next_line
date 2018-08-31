@@ -122,3 +122,13 @@ test_simple.o : test_simple.c
 		$<\
 		-lft\
 		-o $@
+test_bigline.o : test_bigline.c
+	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
+		$<\
+		-lft\
+		-o $@
+test_devrand.o : test_devrand.c
+	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
+		$<\
+		-lft\
+		-o $@
