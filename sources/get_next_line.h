@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:44 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/08/28 03:15:46 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/01 03:01:17 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,13 @@ typedef struct	s_buff_state {
 }				t_s_b;
 
 typedef struct	s_fildes_state {
-	int 		fildes;
+	int			fildes;
 	t_s_b		old;
 	t_s_b		new;
 }				t_s_f;
 
 # define A_LOT 500
 
-int		get_next_line(const int fd, char **line);
+int				get_next_line(const int fd, char **line);
 
 #endif
