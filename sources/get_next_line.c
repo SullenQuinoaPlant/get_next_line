@@ -38,7 +38,7 @@ static char		*read_line(char **line, int rank, t_s_f *s)
 	size_t	i;
 
 	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) != ERROR &&
-			(count || rank))
+			(count || rank || s->old.o_sz))
 	{
 		i = 0;
 		while (i < count && h_buff[i] != EOL)
@@ -70,7 +70,7 @@ static int		known_smallline(t_s_b *b_s, char **line)
 	ii = i;
 	while (i < OVER_SZ)
 	{
-		if (b_s->over[i] == EOL || i + 1 == OVER_SZ)
+		if (b_s->over[i] == EOL)
 		{
 			smallline_sz = i - ii + 1;
 			if ((*line = malloc(smallline_sz)))
