@@ -70,7 +70,7 @@ static int		known_smallline(t_s_b *b_s, char **line)
 	ii = i;
 	while (i < OVER_SZ)
 	{
-		if (b_s->over[i] == EOL)
+		if (b_s->over[i] == EOL || i + 1 == OVER_SZ)
 		{
 			smallline_sz = i - ii + 1;
 			if ((*line = malloc(smallline_sz)))
