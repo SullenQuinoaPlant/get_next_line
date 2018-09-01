@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/01 03:12:42 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/01 03:20:49 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 #include <errno.h>
 #include <string.h>
 
-static void	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
+static void		edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 {
-	size_t		const ip1 = i + 1;
-	size_t		o_sz;
+	size_t const	ip1 = i + 1;
+	size_t			o_sz;
 
 	if (count == i || (count == BUFF_SIZE && ip1 == count))
 		s->new.o_sz = 0;
@@ -31,13 +31,14 @@ static void	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 	}
 }
 
-static char	*read_line(char **line, int rank, t_s_f *s)
+static char		*read_line(char **line, int rank, t_s_f *s)
 {
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
 	size_t	i;
 
-	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) != ERROR && (count || rank))
+	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) != ERROR &&
+			(count || rank))
 	{
 		i = 0;
 		while (i < count && h_buff[i] != EOL)
@@ -59,7 +60,7 @@ static char	*read_line(char **line, int rank, t_s_f *s)
 	return (*line);
 }
 
-static int	known_smallline(t_s_b *b_s, char **line)
+static int		known_smallline(t_s_b *b_s, char **line)
 {
 	size_t	i;
 	size_t	ii;
@@ -87,10 +88,10 @@ static int	known_smallline(t_s_b *b_s, char **line)
 	return (0);
 }
 
-static t_s_f *get_fd_states(int fd)
+static t_s_f	*get_fd_states(int fd)
 {
 	static t_s_f	array[A_LOT];
-	char		c;
+	char			c;
 
 	if (fd >= 0 && fd < A_LOT && !read(fd, &c, 0))
 	{
@@ -100,7 +101,7 @@ static t_s_f *get_fd_states(int fd)
 	return (0);
 }
 
-int		get_next_line(const int fd, char **line)
+int				get_next_line(const int fd, char **line)
 {
 	int		ret;
 	t_s_f	*fd_state;
@@ -111,9 +112,9 @@ int		get_next_line(const int fd, char **line)
 		return (ret);
 	*line = UNALLOCATED;
 	if ((fd_state = get_fd_states(fd)) &&
-		!(ret = known_smallline(&fd_state->old, line)) &&
-		(ret = read_line(line, 0, fd_state) ? 0 : -1) != -1 &&
-		*line != UNALLOCATED)
+			!(ret = known_smallline(&fd_state->old, line)) &&
+			(ret = read_line(line, 0, fd_state) ? 0 : -1) != -1 &&
+			*line != UNALLOCATED)
 	{
 		i = 0;
 		while (i++ < fd_state->old.o_sz)
