@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/08/29 08:24:20 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/01 01:23:52 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int		get_next_line(const int fd, char **line)
 		fd_state->old = fd_state->new;
 		ret = 1;
 	}
-	else if (*line = UNALLOCATED)
+	else if (*line == UNALLOCATED)
 		*line = 0;
 	return (ret);
 }
