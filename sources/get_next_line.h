@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:44 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/01 03:01:17 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/01 05:52:50 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 # define ERROR ~((size_t)0)
 
-# define BUFF_SIZE 5
+# define BUFF_SIZE 10000
 # define OVER_SZ BUFF_SIZE - 1
 # define EOL '\n'
 # define BIGBIGADR ~((size_t)0)
