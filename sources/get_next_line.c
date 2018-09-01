@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/01 01:23:52 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/01 03:12:42 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,16 @@
 
 static void	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 {
-	if (count == i || (count == BUFF_SIZE && i + 1 == count))
+	size_t		const ip1 = i + 1;
+	size_t		o_sz;
+
+	if (count == i || (count == BUFF_SIZE && ip1 == count))
 		s->new.o_sz = 0;
 	else
 	{
-		s->new.o_sz = count - (i + 1);
-		ft_memcpy(s->new.over + OVER_SZ - s->new.o_sz, h_buff + i + 1, s->new.o_sz);
+		o_sz = count - ip1;
+		s->new.o_sz = o_sz;
+		ft_memcpy(s->new.over + OVER_SZ - o_sz, h_buff + ip1, o_sz);
 	}
 }
 
