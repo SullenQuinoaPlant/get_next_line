@@ -10,7 +10,7 @@ $(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
 	-mv $@.a $(LIBS_L)/
 	-cp $(SRC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
 
-$(OBJ_DIR)/$(TARGET).o :
+$(OBJ_DIR)/$(TARGET).o : $(OBJ_DIR)/$(TARGET).c 
 	$(CC) $(CFLAGS)\
 		-I $(LIBS_I)\
 		-o $@\
