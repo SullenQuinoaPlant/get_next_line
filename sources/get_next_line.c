@@ -1,58 +1,70 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
+/*   Updated: 2018/09/01 03:20:49 by nmauvari         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
 
-static int	edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
+static void		edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 {
-	if (count == BUFF_SIZE && i + 1 == count)
-	{
-		if ((s->new.o_sz = read(s->fildes, s->new.over, OVER_SZ)) == ERROR)
-			return (-1);
-	}
+	size_t const	ip1 = i + 1;
+	size_t			o_sz;
+
+	if (count == i || (count == BUFF_SIZE && ip1 == count))
+		s->new.o_sz = 0;
 	else
 	{
-		s->new.o_sz = count == i ? 0 : count - i - 1;
-		ft_memcpy(s->new.over + OVER_SZ - s->new.o_sz, h_buff + i + 1, s->new.o_sz);
+		o_sz = count - ip1;
+		s->new.o_sz = o_sz;
+		ft_memcpy(s->new.over + OVER_SZ - o_sz, h_buff + ip1, o_sz);
 	}
-	if (s->new.o_sz)
-		return (1);
-	s->fildes = CLOSE;
-	return (0);
 }
 
-static int	here_recursion(char **line, int rank, t_s_f *s)
+static char		*read_line(char **line, int rank, t_s_f *s)
 {
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
 	size_t	i;
-	int		ret;
 
-	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) == ERROR)
-		return (-1);
-	i = 0;
-	while (i < count && h_buff[i] != EOL)
-		i++;
-	ret = -1;
-	if (i == BUFF_SIZE)
-		ret = here_recursion(line, rank + 1, s);
-	else if ((*line = malloc(rank * BUFF_SIZE + i + s->old.o_sz + 1)))
+	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) != ERROR &&
+			(count || rank || s->old.o_sz))
 	{
-		ret = edge(h_buff, i, count, s);
-		*line += rank * BUFF_SIZE + i + s->old.o_sz;
-		**line = '\0';
+		i = 0;
+		while (i < count && h_buff[i] != EOL)
+			i++;
+		if (i == BUFF_SIZE)
+			read_line(line, rank + 1, s);
+		else if ((*line = malloc(rank * BUFF_SIZE + i + s->old.o_sz + 1)))
+		{
+			edge(h_buff, i, count, s);
+			*line += rank * BUFF_SIZE + i + s->old.o_sz;
+			**line = '\0';
+		}
+		if (*line)
+			while (i--)
+				*--(*line) = h_buff[i];
 	}
-	if (ret != -1)
-		while (i--)
-			*--(*line) = h_buff[i];
-	return (ret);
+	else if (count == ERROR)
+		*line = 0;
+	return (*line);
 }
 
-static int	short_message(t_s_b *b_s, char **line)
+static int		known_smallline(t_s_b *b_s, char **line)
 {
 	size_t	i;
 	size_t	ii;
+	size_t	smallline_sz;
 
 	i = OVER_SZ - b_s->o_sz;
 	ii = i;
@@ -60,12 +72,13 @@ static int	short_message(t_s_b *b_s, char **line)
 	{
 		if (b_s->over[i] == EOL)
 		{
-			if ((*line = malloc(i - ii + 1)))
+			smallline_sz = i - ii + 1;
+			if ((*line = malloc(smallline_sz)))
 			{
-				b_s->o_sz -= i - ii + 1;
-				(*line)[i - ii] = '\0';
-				while (i-- != ii)
-					(*line)[i - ii] = b_s->over[i];
+				b_s->o_sz -= smallline_sz;
+				(*line)[--smallline_sz] = '\0';
+				while (smallline_sz--)
+					(*line)[smallline_sz] = b_s->over[--i];
 				return (1);
 			}
 			return (-1);
@@ -75,75 +88,41 @@ static int	short_message(t_s_b *b_s, char **line)
 	return (0);
 }
 
-//static t_s_f	*get_fd_states(int fd)
-//{
-//	static t_s_f			new = {.fildes = STEM};
-//	static t_list			top;
-//	t_list					*iter;
-//	t_list					*prev;
-//	
-//	if (fd == CLOSE)
-//	{
-//		void	cleanup(void *at, size_t sz)
-//		{
-//			ft_bzero(at, sz);
-//			free(at);
-//		}
-//		ft_lstdel(&top.next, &cleanup);
-//		return (0);
-//	}
-//	iter = &top;
-//	while ((prev = iter) && (iter = iter->next))
-//		if ((*(t_s_f*)iter->content).fildes == CLOSE)
-//		{
-//			prev->next = iter->next;
-//			free(iter->content);
-//			free(iter);
-//			iter = prev->next;
-//		}
-//		else if ((*(t_s_f*)iter->content).fildes == fd)
-//			return ((t_s_f*)iter->content);
-//	new.fildes = fd;
-//	ft_lstadd(&top.next, ft_lstnew(&new, sizeof(t_s_f)));
-//	return ((t_s_f*)top.next->content);
-//}
-
-static t_s_f *get_fd_states(int fd)
+static t_s_f	*get_fd_states(int fd)
 {
 	static t_s_f	array[A_LOT];
-	size_t			i;
+	char			c;
 
-	if (fd >= 0)
+	if (fd >= 0 && fd < A_LOT && !read(fd, &c, 0))
 	{
 		array[fd].fildes = fd;
 		return (array + fd);
 	}
-	else if (fd == CLOSE)
-	{
-		i = -1;
-		while (++i < A_LOT)
-			ft_bzero(array + i, sizeof(t_s_f));
-	}
 	return (0);
 }
 
-int		get_next_line(const int fd, char **line)
+int				get_next_line(const int fd, char **line)
 {
 	int		ret;
-	t_s_f	*fd_states;
+	t_s_f	*fd_state;
 	size_t	i;
 
 	ret = -1;
-	if ((fd_states = get_fd_states(fd)) &&
-		!(ret = short_message(&fd_states->old, line)) &&
-		(ret = here_recursion(line, 0, fd_states)) != -1)
+	if (!line)
+		return (ret);
+	*line = UNALLOCATED;
+	if ((fd_state = get_fd_states(fd)) &&
+			!(ret = known_smallline(&fd_state->old, line)) &&
+			(ret = read_line(line, 0, fd_state) ? 0 : -1) != -1 &&
+			*line != UNALLOCATED)
 	{
 		i = 0;
-		while (i++ < fd_states->old.o_sz)
-			*--(*line) = fd_states->old.over[OVER_SZ - i];
-		fd_states->old = fd_states->new;
+		while (i++ < fd_state->old.o_sz)
+			*--(*line) = fd_state->old.over[OVER_SZ - i];
+		fd_state->old = fd_state->new;
+		ret = 1;
 	}
-	else if (ret == -1)
-		*line = malloc(0);
+	else if (*line == UNALLOCATED)
+		*line = 0;
 	return (ret);
 }
