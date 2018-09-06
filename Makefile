@@ -23,8 +23,10 @@ $(LIBNAME) : $(LIBS_L)/$(LIBNAME).a
 $(LIBS_L)/$(LIBNAME).a : $(OBJ_DIR)/$(TARGET).o
 	ar rcs $@ $<
 	cp $(INC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
+	sed -e'13s@ @ LIB@' -e'14s@\(# define \)@\1LIB@' -i "" $(LIBS_I)/$(LIBNAME).h
 
-$(OBJ_DIR)/$(TARGET).o :
+
+$(OBJ_DIR)/$(TARGET).o : $(SRC_DIR)/$(TARGET).c 
 	$(CC) $(CFLAGS)\
 		-I $(LIBS_I)\
 		-o $@\
