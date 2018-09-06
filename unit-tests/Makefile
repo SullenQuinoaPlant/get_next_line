@@ -126,3 +126,8 @@ test_devrand.o : test_devrand.c
 		$<\
 		-lft\
 		-o $@
+test_smalllines.o : test_smalllines.c
+	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
+		$<\
+		-lft\
+		-o $@
