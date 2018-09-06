@@ -1,14 +1,12 @@
-ifndef ROOT
-	ROOT = .
-	include make_vars.mk
-endif
-
+.PHONY : all
 all : $(LIBNAME)
 
-$(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
-	ar rcs $@.a $<
-	-mv $@.a $(LIBS_L)/
-	-cp $(SRC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
+.PHONY : $(LIBNAME)
+$(LIBNAME) : $(LIBS_L)/$(LIBNAME).a
+
+$(LIBS_L)/$(LIBNAME).a : $(OBJ_DIR)/$(TARGET).o
+	ar rcs $@ $<
+	cp $(INC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
 
 $(OBJ_DIR)/$(TARGET).o : $(OBJ_DIR)/$(TARGET).c 
 	$(CC) $(CFLAGS)\

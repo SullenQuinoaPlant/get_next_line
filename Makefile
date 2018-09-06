@@ -1,23 +1,19 @@
 ifndef ROOT
 	ROOT := .
-	include $(ROOT)/make_vars.mk
 endif
+include $(ROOT)/make_vars.mk
 
 
 #######
 #CORE :
-
-include Makefile.mk
-
+include core.mk
 
 #######
 #LIBS :
-
 include libs/Makefile
 
 ########
 #TESTS :
-
 include unit-tests/Makefile
 
 
@@ -25,25 +21,37 @@ include unit-tests/Makefile
 #RELEASE
 .PHONY : release
 release:
+	-rm -rf $(ROOT)/$@
 	git clone\
 		--depth 1 --single-branch\
 		-b release\
 		https://github.com/SullenQuinoaPlant/get_next_line.git\
 		$(ROOT)/$@/
+	cd $(ROOT)/$@ && git rm -rf *
 	cp $(ROOT)/auteur $(ROOT)/$@
-	cp -rf $(ROOT)/sources/ $(ROOT)/$@
-	cp $(ROOT)/Makefile.mk $(ROOT)/$@/Makefile
-	cp $(ROOT)/make_vars_release.mk $(ROOT)/$@/make_vars.mk
-	cp $(LIBS_I)/libft.h $(ROOT)/$@/sources/
+	cp $(ROOT)/make_vars_release.mk $(ROOT)/$@/Makefile
+	cat $(ROOT)/core.mk >> $(ROOT)/$@/Makefile
+	mkdir $(ROOT)/$@/sources/ 
+	cp -r $(ROOT)/sources/ $(ROOT)/$@/sources
+	mkdir $(ROOT)/$@/includes/ 
+	cp -r $(ROOT)/includes/ $(ROOT)/$@/includes
+	cp $(LIBS_I)/libft.h $(ROOT)/$@/includes/
 	cd $(ROOT)/$@ && git add * && git commit -m i && git push
 
+
+########
+#PROJECT
 .PHONY : project
 project :
-	if [ -d "$(ROOT)/$@" ]; then rm -rf "$(ROOT)/$@"; fi
-	mkdir $(ROOT)/$@/
-	cp $(ROOT)/auteur $(ROOT)/$@
-	cp $(ROOT)/sources/* $(ROOT)/$@
-	cp $(LIBS_I)/libft.h $(ROOT)/$@
-	git clone https://github.com/SullenQuinoaPlant/Libft.git\
-		-b release --single-branch --depth 1\
-		$(ROOT)/$@/libft
+.PHONY : $(ROOT)/project
+$(ROOT)/project :
+	-rm -rf $@
+	mkdir $@
+	git clone\
+		--depth 1 --single-branch\
+		-b release\
+		https://github.com/SullenQuinoaPlant/Libft.git\
+		$@/libft
+	cp $(ROOT)/auteur $@
+	cp $(SRC_DIR)/$(TARGET).c $@
+	cp $(INC_DIR)/$(TARGET).h $@
