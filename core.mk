@@ -8,7 +8,7 @@ $(LIBS_L)/$(LIBNAME).a : $(OBJ_DIR)/$(TARGET).o
 	ar rcs $@ $<
 	cp $(INC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
 
-$(OBJ_DIR)/$(TARGET).o : $(OBJ_DIR)/$(TARGET).c 
+$(OBJ_DIR)/$(TARGET).o : $(SRC_DIR)/$(TARGET).c 
 	$(CC) $(CFLAGS)\
 		-I $(LIBS_I)\
 		-o $@\
