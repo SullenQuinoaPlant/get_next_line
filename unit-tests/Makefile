@@ -8,10 +8,8 @@ TEST_OBJS := $(TEST_SRCS:.c=.o)
 BUILD_STAMPS := $(TEST_OBJS:.o=.build.stamp)
 EXECUTION_STAMPS := $(TEST_OBJS:.o=.execution.stamp)
 
-CC = gcc
-CFLAGS_MORE =
-CFLAGS = -fno-builtin #-Wall -Wextra -Werror
-CFLAGS += $(CFLAGS_MORE)
+CTESTFLAGS = -I $(LIBS_I) -L $(LIBS_L) -fno-builtin #-Wall -Wextra -Werror
+CTESTFLAGS += $(CFLAGS_MORE)
 
 
 
@@ -34,8 +32,7 @@ build_tests : cmocka $(TEST_OBJS)
 
 .PHONY : cmocka
 cmocka : 
-	if $(CC) $(CFLAGS)\
-		-I $(LIBS_I) -L $(LIBS_L)\
+	if $(CC) $(CTESTFLAGS)\
 	 	$(UTEST_DIR)/boilerplate.c\
 		 -lcmocka -o test.o; then\
 			rm test.o;\
@@ -47,23 +44,20 @@ cmocka :
 	fi
 
 %.test.o $(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS)\
-		-I $(LIBS_I) -I $(SRC_DIR)\
+	$(CC) $(CTESTFLAGS)\
+		-I $(SRC_DIR)\
 		-D main=testee_main\
 		-include $(SRC_DIR)/$*.c\
 		$<\
-		-L $(LIBS_L)\
 		-lcmocka -lft\
 		-o $@\
 		-Wl,-rpath=$$(readlink -e $(LIBS_L));\
 		touch $(UTEST_DIR)/$*.test.build.stamp
 
 %.test.o : %.test.c
-	$(CC) $(CFLAGS)\
+	$(CC) $(CTESTFLAGS)\
 		-I $(SRC_DIR)\
-		-I $(LIBS_I)\
 		$<\
-		-L $(LIBS_L)\
 		-lcmocka -lft\
 		-o $@\
 		-Wl,-rpath=$$(readlink -e $(LIBS_L));\

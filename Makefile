@@ -1,6 +1,7 @@
 ifndef ROOT
 	ROOT := .
 endif
+include $(ROOT)/make_vars.mk
 
 
 #######
@@ -25,20 +26,11 @@ release:
 		-b release\
 		https://github.com/SullenQuinoaPlant/get_next_line.git\
 		$(ROOT)/$@/
+	cd $(ROOT)/$@ && git rm -rf *
 	cp $(ROOT)/auteur $(ROOT)/$@
-	cp -rf $(ROOT)/sources/ $(ROOT)/$@
-	cp $(ROOT)/Makefile.mk $(ROOT)/$@/Makefile
-	cp $(ROOT)/make_vars_release.mk $(ROOT)/$@/make_vars.mk
-	cp $(LIBS_I)/libft.h $(ROOT)/$@/sources/
+	cp $(ROOT)/make_vars_release.mk $(ROOT)/$@/Makefile
+	cat $(ROOT)/core.mk >> $(ROOT)/$@/Makefile
+	cp -r $(ROOT)/sources/ $(ROOT)/$@
+	cp -r $(ROOT)/includes/ $(ROOT)/$@
+	cp $(LIBS_I)/libft.h $(ROOT)/$@/includes/
 	cd $(ROOT)/$@ && git add * && git commit -m i && git push
-
-.PHONY : project
-project :
-	if [ -d "$(ROOT)/$@" ]; then rm -rf "$(ROOT)/$@"; fi
-	mkdir $(ROOT)/$@/
-	cp $(ROOT)/auteur $(ROOT)/$@
-	cp $(ROOT)/sources/* $(ROOT)/$@
-	cp $(LIBS_I)/libft.h $(ROOT)/$@
-	git clone https://github.com/SullenQuinoaPlant/Libft.git\
-		-b the_lib --single-branch --depth 1\
-		$(ROOT)/$@/libft

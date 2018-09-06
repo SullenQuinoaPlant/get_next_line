@@ -1,10 +1,11 @@
-include $(ROOT)/make_vars.mk
-
+.PHONY : all
 all : $(LIBNAME)
 
-$(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
-	ar rcs $@.a $<
-	-mv $@.a $(LIBS_L)/
+.PHONY : $(LIBNAME)
+$(LIBNAME) : $(LIBS_L)/$(LIBNAME).a
+
+$(LIBS_L)/$(LIBNAME).a : $(OBJ_DIR)/$(TARGET).o
+	ar rcs $@ $<
 	cp $(INC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
 
 $(OBJ_DIR)/$(TARGET).o :
