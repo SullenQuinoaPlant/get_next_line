@@ -1,14 +1,11 @@
-ifndef ROOT
-	ROOT = .
-	include make_vars.mk
-endif
+include $(ROOT)/make_vars.mk
 
 all : $(LIBNAME)
 
 $(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
 	ar rcs $@.a $<
 	-mv $@.a $(LIBS_L)/
-	-cp $(SRC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
+	cp $(INC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
 
 $(OBJ_DIR)/$(TARGET).o :
 	$(CC) $(CFLAGS)\
