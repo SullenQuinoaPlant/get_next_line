@@ -45,5 +45,5 @@ project :
 	cp $(ROOT)/sources/* $(ROOT)/$@
 	cp $(LIBS_I)/libft.h $(ROOT)/$@
 	git clone https://github.com/SullenQuinoaPlant/Libft.git\
-		-b the_lib --single-branch --depth 1\
+		-b release --single-branch --depth 1\
 		$(ROOT)/$@/libft
