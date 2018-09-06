@@ -1,16 +1,28 @@
-ifndef ROOT
-	ROOT = .
-	include make_vars.mk
-endif
+NAME = getnextline
+LIBNAME = lib$(NAME)
+TARGET = get_next_line
 
+SRC_DIR := $(ROOT)/sources
+INC_DIR := $(ROOT)/includes
+OBJ_DIR := $(ROOT)/sources
+LIB_DIR := $(ROOT)
+LIBS_L := $(LIB_DIR)
+LIBS_I := $(INC_DIR)
+
+CC = gcc
+CFLAGS_MORE =
+CFLAGS := -Wall -Wextra -Werror $(CFLAGS_MORE)
+.PHONY : all
 all : $(LIBNAME)
 
-$(LIBNAME) : $(OBJ_DIR)/$(TARGET).o
-	ar rcs $@.a $<
-	-mv $@.a $(LIBS_L)/
-	-cp $(SRC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
+.PHONY : $(LIBNAME)
+$(LIBNAME) : $(LIBS_L)/$(LIBNAME).a
 
-$(OBJ_DIR)/$(TARGET).o : $(OBJ_DIR)/$(TARGET).c 
+$(LIBS_L)/$(LIBNAME).a : $(OBJ_DIR)/$(TARGET).o
+	ar rcs $@ $<
+	cp $(INC_DIR)/$(TARGET).h $(LIBS_I)/$(LIBNAME).h
+
+$(OBJ_DIR)/$(TARGET).o :
 	$(CC) $(CFLAGS)\
 		-I $(LIBS_I)\
 		-o $@\

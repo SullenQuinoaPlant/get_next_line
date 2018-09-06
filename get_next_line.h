@@ -17,7 +17,7 @@
 
 # define ERROR ~((size_t)0)
 
-# define BUFF_SIZE 256
+# define BUFF_SIZE 10000
 # define OVER_SZ BUFF_SIZE - 1
 # define EOL '\n'
 # define BIGBIGADR ~((size_t)0)

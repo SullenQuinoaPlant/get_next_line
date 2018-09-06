@@ -38,7 +38,7 @@ static char		*read_line(char **line, int rank, t_s_f *s)
 	size_t	i;
 
 	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) != ERROR &&
-			(count || rank || s->old.o_sz))
+			(count || rank))
 	{
 		i = 0;
 		while (i < count && h_buff[i] != EOL)
