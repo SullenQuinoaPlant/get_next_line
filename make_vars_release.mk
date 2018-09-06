@@ -1,3 +1,5 @@
+ROOT = .
+
 NAME = getnextline
 LIBNAME = lib$(NAME)
 TARGET = get_next_line
