@@ -6,17 +6,13 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/01 03:20:49 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/10 10:45:34 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-
-static void		edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
+static void		edge(char const *h_buff, size_t i, size_t count, t_s_fs *s)
 {
 	size_t const	ip1 = i + 1;
 	size_t			o_sz;
@@ -31,7 +27,7 @@ static void		edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 	}
 }
 
-static char		*read_line(char **line, int rank, t_s_f *s)
+static char		*read_line(char **line, int rank, t_s_fs *s)
 {
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
@@ -88,9 +84,9 @@ static int		known_smallline(t_s_b *b_s, char **line)
 	return (0);
 }
 
-static t_s_f	*get_fd_states(int fd)
+static t_s_fs	*get_fd_state(int fd)
 {
-	static t_s_f	array[A_LOT];
+	static t_s_fs	array[A_LOT];
 	char			c;
 
 	if (fd >= 0 && fd < A_LOT && !read(fd, &c, 0))
@@ -104,14 +100,14 @@ static t_s_f	*get_fd_states(int fd)
 int				get_next_line(const int fd, char **line)
 {
 	int		ret;
-	t_s_f	*fd_state;
+	t_s_fs	*fd_state;
 	size_t	i;
 
 	ret = -1;
 	if (!line)
 		return (ret);
 	*line = UNALLOCATED;
-	if ((fd_state = get_fd_states(fd)) &&
+	if ((fd_state = get_fd_state(fd)) &&
 			!(ret = known_smallline(&fd_state->old, line)) &&
 			(ret = read_line(line, 0, fd_state) ? 0 : -1) != -1 &&
 			*line != UNALLOCATED)
