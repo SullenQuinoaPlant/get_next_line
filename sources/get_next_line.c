@@ -28,25 +28,41 @@ static void		edge(char const *h_buff, size_t i, size_t count, t_s_fs *s)
 	}
 }
 
-static char		*read_line(char **line, int rank, t_s_fs *fd_s)
+static void	*read_line(char **line, int rank, t_s_fs *fd_s)
 {
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
 	size_t	i;
 
-	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) != ERROR &&
-			(count || rank || s->old.o_sz))
+	if ((count = read(fd_s->fildes, h_buff, BUFF_SIZE)) != ERROR &&
+			(count || rank || fd_s))
 	{
 		i = 0;
 		while (i < count && h_buff[i] != EOL)
 			i++;
 		if (i == BUFF_SIZE)
 			read_line(line, rank + 1, s);
-		else if ((*line = malloc(rank * BUFF_SIZE + i + s->old.o_sz + 1)))
+		else if ((*line = malloc(fd_s->len + rank * BUFF_SIZE + i + 1)))
 		{
-			edge(h_buff, i, count, s);
-			*line += rank * BUFF_SIZE + i + s->old.o_sz;
+			if (fd_s->len)
+			{
+				ft_memcpy(*line, fd_s->p_b, fd_s->len);
+				ft_cleanfree(fd_s->buf, fd_s->p_b + fd_s->len - fd_s->buf);
+			}
+			*line += fd_s->len + rank * BUFF_SIZE + i;
 			**line = '\0';
+			if ((count > i + 1))
+			{
+				fd_s->len = count - i - 1;
+				if (!(fd_s->buf = malloc(fd_s->len)))
+					return (-1);
+				ft_memcpy(fd_s->buf, h_buff + i + 1, fd_s->len);
+				fd_s->p = fd_s->buf;
+				get_set_fdstate(-1, fd_s);
+			}
+			else
+				ft_cleanfree(fd_s, sizeof(t_s_fs));
+				free_fd_s(fd_s);
 		}
 		if (*line)
 			while (i--)
@@ -54,13 +70,12 @@ static char		*read_line(char **line, int rank, t_s_fs *fd_s)
 	}
 	else if (count == ERROR)
 		*line = 0;
-	return (*line);
 }
 
 static int		known_smallline(t_s_fs *fd_s, t_s_fs *anchor, char **line)
 {
 	char *const		strt = fd_s->p_b;
-	char *const		lim = fd_s->buf + fd_s->b_sz;
+	char *const		lim = strt + fd_s->len;
 	size_t			len;
 	char			*p;
 
@@ -76,7 +91,7 @@ static int		known_smallline(t_s_fs *fd_s, t_s_fs *anchor, char **line)
 			if ((fd_s->p_b = p) == lim)
 			{
 				anchor->nxt = fd_s->nxt;
-				ft_cleanfree(fd_s->buf, fd_s->b_sz);
+				ft_cleanfree(fd_s->buf, lim - fd_s->buf);
 				ft_cleanfree(fd_s, sizeof(t_s_fs);
 			}
 			return (1);

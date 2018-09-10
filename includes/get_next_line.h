@@ -28,7 +28,7 @@ typedef struct s_fildes_state	t_s_fs;
 struct							s_fildes_state {
 	int			fd;
 	char		*buf;
-	size_t		b_sz;
+	size_t		len;
 	char		*p_b;
 	t_s_fs		*nxt;
 };
