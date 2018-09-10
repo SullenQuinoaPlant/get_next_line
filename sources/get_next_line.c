@@ -6,12 +6,13 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/10 15:01:38 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/10 15:27:36 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+static void		edge(char const *buff, size_t b_len, 
 static void		edge(char const *h_buff, size_t i, size_t count, t_s_fs *s)
 {
 	size_t const	ip1 = i + 1;
@@ -58,47 +59,23 @@ static char		*read_line(char **line, int rank, t_s_fs *s)
 
 static int		known_smallline(t_s_fs *fb_s, char **line)
 {
-	size_t const	sz = fd_s->old.sz;
-	char *const		p = fd_s->old.over;;
-	size_t	i;
-	size_t	smallline_sz;
+	char *const		strt = fd_s->old.p_b;
+	char *const		lim = fd_s->old.buffer + fd_s->old.b_sz;;
+	size_t			sz;
+	char			*p;
 
-	i = -1;
-	while (++i < sz)
-		if (p[i] == EOL)
+	p = strt;
+	while (p < lim)
+		if (*p == EOL)
 		{
-			if ((*line = malloc(i)))
-			{
-				b_s->o_sz -= smallline_sz;
-				(*line)[--smallline_sz] = '\0';
-				while (smallline_sz--)
-					(*line)[smallline_sz] = b_s->over[--i];
-			}
-			else
+			sz = p - strt + 1;
+			if (sz && !(*line = malloc(sz)))
 				return (-1);
-			edge(p, i, fb_s);
+			ft_strncpy(*line, strt, sz - 1);
+			(*line)[sz - 1] = '\0';
+			edge(fb_s, 
 			return (1);
 		}
-	return (0);
-	i = OVER_SZ - b_s->o_sz;
-	ii = i;
-	while (i < OVER_SZ)
-	{
-		if (b_s->over[i] == EOL)
-		{
-			smallline_sz = i - ii + 1;
-			if ((*line = malloc(smallline_sz)))
-			{
-				b_s->o_sz -= smallline_sz;
-				(*line)[--smallline_sz] = '\0';
-				while (smallline_sz--)
-					(*line)[smallline_sz] = b_s->over[--i];
-				return (1);
-			}
-			return (-1);
-		}
-		i++;
-	}
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:44 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/10 14:55:32 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/10 15:13:32 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@
 # define UNALLOCATED (char*)0 + BIGBIGADR
 
 typedef struct	s_buff_state {
-	size_t	sz;
-	char	*over;
+	char	*buffer;
+	size_t	b_sz;
+	char	*p_b;
 }				t_s_b;
 
 typedef struct s_fildes_state	t_s_fs;
