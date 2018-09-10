@@ -24,16 +24,12 @@
 # define BIGBIGADR ~((size_t)0)
 # define UNALLOCATED (char*)0 + BIGBIGADR
 
-typedef struct	s_buff_state {
-	char	*buffer;
-	size_t	b_sz;
-	char	*p_b;
-}				t_s_b;
-
 typedef struct s_fildes_state	t_s_fs;
 struct							s_fildes_state {
 	int			fd;
-	t_s_b		old;
+	char		*buf;
+	size_t		b_sz;
+	char		*p_b;
 	t_s_fs		*nxt;
 };
 

@@ -28,7 +28,7 @@ static void		edge(char const *h_buff, size_t i, size_t count, t_s_fs *s)
 	}
 }
 
-static char		*read_line(char **line, int rank, t_s_fs *s)
+static char		*read_line(char **line, int rank, t_s_fs *fd_s)
 {
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
@@ -57,23 +57,28 @@ static char		*read_line(char **line, int rank, t_s_fs *s)
 	return (*line);
 }
 
-static int		known_smallline(t_s_fs *fb_s, char **line)
+static int		known_smallline(t_s_fs *fd_s, t_s_fs *anchor, char **line)
 {
-	char *const		strt = fd_s->old.p_b;
-	char *const		lim = fd_s->old.buffer + fd_s->old.b_sz;;
-	size_t			sz;
+	char *const		strt = fd_s->p_b;
+	char *const		lim = fd_s->buf + fd_s->b_sz;
+	size_t			len;
 	char			*p;
 
 	p = strt;
 	while (p < lim)
-		if (*p == EOL)
+		if (*p++ == EOL)
 		{
-			sz = p - strt + 1;
-			if (sz && !(*line = malloc(sz)))
+			len = p - strt;
+			if (sz && !(*line = malloc(len--)))
 				return (-1);
-			ft_strncpy(*line, strt, sz - 1);
-			(*line)[sz - 1] = '\0';
-			edge(fb_s, 
+			(*line)[len] = '\0';
+			ft_memcpy(*line, strt, len1);
+			if ((fd_s->p_b = p) == lim)
+			{
+				anchor->nxt = fd_s->nxt;
+				ft_cleanfree(fd_s->buf, fd_s->b_sz);
+				ft_cleanfree(fd_s, sizeof(t_s_fs);
+			}
 			return (1);
 		}
 	return (0);
