@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/10 10:45:34 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/10 15:01:38 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,30 @@ static char		*read_line(char **line, int rank, t_s_fs *s)
 	return (*line);
 }
 
-static int		known_smallline(t_s_b *b_s, char **line)
+static int		known_smallline(t_s_fs *fb_s, char **line)
 {
+	size_t const	sz = fd_s->old.sz;
+	char *const		p = fd_s->old.over;;
 	size_t	i;
-	size_t	ii;
 	size_t	smallline_sz;
 
+	i = -1;
+	while (++i < sz)
+		if (p[i] == EOL)
+		{
+			if ((*line = malloc(i)))
+			{
+				b_s->o_sz -= smallline_sz;
+				(*line)[--smallline_sz] = '\0';
+				while (smallline_sz--)
+					(*line)[smallline_sz] = b_s->over[--i];
+			}
+			else
+				return (-1);
+			edge(p, i, fb_s);
+			return (1);
+		}
+	return (0);
 	i = OVER_SZ - b_s->o_sz;
 	ii = i;
 	while (i < OVER_SZ)
@@ -86,15 +104,27 @@ static int		known_smallline(t_s_b *b_s, char **line)
 
 static t_s_fs	*get_fd_state(int fd)
 {
-	static t_s_fs	array[A_LOT];
+	static t_s_fs	anchor = (t_s_fs){-1, (t_s_b){0, 0}, 0};
+	t_s_fs			*p;
+	t_s_fs			*prev;
 	char			c;
 
-	if (fd >= 0 && fd < A_LOT && !read(fd, &c, 0))
-	{
-		array[fd].fildes = fd;
-		return (array + fd);
-	}
-	return (0);
+	if (fd < 0)
+		return (0);
+	p = &anchor;
+	while (p->fd != fd && (prev = p))
+		p = p->nxt;
+	if (p)
+		prev->nxt = p->nxt;
+	else if (!p && read(fd, &c, 0))
+		return (0);
+	else if (!(p = malloc(sizeof(t_s_fs))))
+		return (0);
+	else
+		*p = {fd, (t_s_b){0, 0}, 0};
+	p->nxt = anchor->nxt;
+	anchor->nxt = p;
+	return (p);
 }
 
 int				get_next_line(const int fd, char **line)
@@ -108,16 +138,10 @@ int				get_next_line(const int fd, char **line)
 		return (ret);
 	*line = UNALLOCATED;
 	if ((fd_state = get_fd_state(fd)) &&
-			!(ret = known_smallline(&fd_state->old, line)) &&
-			(ret = read_line(line, 0, fd_state) ? 0 : -1) != -1 &&
+			!(ret = known_smallline(fd_state, line)) &&
+			(ret = read_line(line, 0, fd_state) != -1 &&
 			*line != UNALLOCATED)
-	{
-		i = 0;
-		while (i++ < fd_state->old.o_sz)
-			*--(*line) = fd_state->old.over[OVER_SZ - i];
-		fd_state->old = fd_state->new;
-		ret = 1;
-	}
+		return (1)
 	else if (*line == UNALLOCATED)
 		*line = 0;
 	return (ret);
