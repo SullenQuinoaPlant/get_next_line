@@ -41,10 +41,6 @@ int		main(int ac, char *av[])
 		return (0);
 	}
 
-	T(nop,
-		(void)state;
-	)
-
 	T_D(bad_fildes_1, td,
 		char	*line;
 		int		ret;
