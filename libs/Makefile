@@ -10,6 +10,8 @@ libft :
 		--depth 1\
 		https://github.com/SullenQuinoaPlant/Libft.git\
 		$(LIB_DIR)/$@
+	$(MAKE) -C $(LIB_DIR)/$@
+	mv $(LIB_DIR)/$@/libft.a $(LIBS_L)
 	cp $(LIB_DIR)/$@/includes/libft.h $(LIBS_I)/
 
 .PHONY : clean-lib*

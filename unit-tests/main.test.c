@@ -4,17 +4,16 @@
 #include "get_next_line.h"
 
 #include <stdio.h>
-#define HOW_MANY_TESTS 10
-#include "cmocka/my_macro_overlay.h"
-
 
 int		main(void)
 {
-	T(nop,
-		ft_putstr("hello world\n");
-	)
-    return (\
-		_cmocka_run_group_tests("TEST_ARR", TEST_ARR,\
-					test_index, 0, 0)\
-	);
+	char	*p;
+	int		r;
+
+	while ((r = get_next_line(0, &p)) == 1)
+	{
+		printf("%s\n", p);
+		free(p);
+	}
+	return (0);
 }

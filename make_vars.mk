@@ -13,9 +13,10 @@ LIB_DIR := $(ROOT)/libs
 LIBS_L := $(LIB_DIR)/objects
 LIBS_I := $(LIB_DIR)/includes
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I $(INC_DIR)
+CC = /Users/nmauvari/Applications/GCC/bin/gcc-8.1
 CFLAGS_MORE =
+CFLAGS = -Wall -Wextra -Werror -I $(INC_DIR)
+CFLAGS += $(CFLAGS_MORE)
 
 
 UTEST_DIR := $(ROOT)/unit-tests

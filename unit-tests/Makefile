@@ -1,6 +1,6 @@
 ifndef ROOT
-	ROOT = ..
-	include $(ROOT)/make_vars.mk
+ ROOT = ..
+ include $(ROOT)/make_vars.mk
 endif
 
 TEST_SRCS := $(wildcard $(UTEST_DIR)/*.test.c)
@@ -8,9 +8,8 @@ TEST_OBJS := $(TEST_SRCS:.c=.o)
 BUILD_STAMPS := $(TEST_OBJS:.o=.build.stamp)
 EXECUTION_STAMPS := $(TEST_OBJS:.o=.execution.stamp)
 
-CTESTFLAGS = -I $(LIBS_I) -L $(LIBS_L) -fno-builtin #-Wall -Wextra -Werror
+CTESTFLAGS = -I $(LIBS_I) -I $(INC_DIR) -L $(LIBS_L) -fno-builtin
 CTESTFLAGS += $(CFLAGS_MORE)
-
 
 
 .PHONY : unit-tests ut
@@ -38,7 +37,7 @@ cmocka :
 			rm test.o;\
 			echo "cmocka already installed";\
 	else\
-		$(MAKE) -C $(UTEST_DIR)/cmocka/;\
+		-$(MAKE) -C $(UTEST_DIR)/cmocka/;\
 		mv $(UTEST_DIR)/cmocka/libcmocka* $(LIBS_L)/;\
 		mv $(UTEST_DIR)/cmocka/cmocka.h $(LIBS_I)/;\
 	fi
@@ -47,20 +46,20 @@ cmocka :
 	$(CC) $(CTESTFLAGS)\
 		-I $(SRC_DIR)\
 		-D main=testee_main\
-		-include $(SRC_DIR)/$*.c\
+		-include $(SRC_DIR)/$(*F).c\
 		$<\
-		-lcmocka -lft\
+		-lcmocka -lgetnextline -lft\
 		-o $@\
-		-Wl,-rpath=$$(readlink -e $(LIBS_L));\
+		-Wl,-rpath "$(LIBS_L)";\
 		touch $(UTEST_DIR)/$*.test.build.stamp
 
 %.test.o : %.test.c
 	$(CC) $(CTESTFLAGS)\
 		-I $(SRC_DIR)\
 		$<\
-		-lcmocka -lft\
+		-lcmocka -lgetnextline -lft\
 		-o $@\
-		-Wl,-rpath=$$(readlink -e $(LIBS_L));\
+		-Wl,-rpath "$(LIBS_L)";\
 		touch $(UTEST_DIR)/$(*F).test.build.stamp
 
 %.test.c : $(UTEST_DIR)/cmocka/my_macro_overlay.h
@@ -76,7 +75,7 @@ cmocka :
 run_tests : $(EXECUTION_STAMPS)
 
 %.execution.stamp : %.build.stamp
-	./$*.o "$$(readlink -e $(UTEST_DIR))"
+	./$*.o "$(UTEST_DIR)"
 	touch $@
 
 %.build.stamp :

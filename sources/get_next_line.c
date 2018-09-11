@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/11 06:50:39 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/11 08:14:44 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,5 +136,7 @@ int				get_next_line(const int fd, char **line)
 		get_set_fd_state(SET_FD, fd_s);
 	if (ret == -1)
 		*line = malloc(0);
+	else if (**line)
+		ret = 1;
 	return (ret);
 }
