@@ -20,8 +20,8 @@ unit-tests ut : list_tests build_tests run_tests
 #STANDALONE
 .PHONY : alone
 alone :
-	gcc -I ../sources -I ../libs/includes -L ../libs/objects\
-		test.c -lft -g
+	gcc -I ../includes -I ../libs/includes -L ../libs/objects\
+		test.c -lgetnextline -lft -g
 
 ############
 #BUILD TESTS
