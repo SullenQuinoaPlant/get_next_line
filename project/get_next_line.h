@@ -6,36 +6,34 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:44 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/06 04:50:01 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/11 06:47:56 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
+# include <stdlib.h>
+# include <unistd.h>
 # include "libft.h"
 
-# define ERROR ~((size_t)0)
-
 # define BUFF_SIZE 1000
-# define OVER_SZ BUFF_SIZE - 1
 # define EOL '\n'
-# define BIGBIGADR ~((size_t)0)
-# define UNALLOCATED (char*)0 + BIGBIGADR
+# define GNL_ERR (size_t)-1
 
-typedef struct	s_buff_state {
-	size_t	o_sz;
-	char	over[OVER_SZ];
-}				t_s_b;
+# define GET_FD 0
+# define SET_FD -1
 
-typedef struct	s_fildes_state {
-	int			fildes;
-	t_s_b		old;
-	t_s_b		new;
-}				t_s_f;
+typedef struct s_fildes_state	t_s_fs;
+struct							s_fildes_state {
+	int			fd;
+	char		*buf;
+	size_t		b_sz;
+	char		*p_b;
+	size_t		len;
+	t_s_fs		*nxt;
+};
 
-# define A_LOT 500
-
-int				get_next_line(const int fd, char **line);
+int								get_next_line(const int fd, char **line);
 
 #endif
