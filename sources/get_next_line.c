@@ -82,8 +82,6 @@ static int		read_line(char **line, int rank, t_s_fs *fd_s)
 		*line += fd_s->len + rank * BUFF_SIZE + i;
 		**line = '\0';
 	}
-	else if (*line)
-		free(*line);
 	if (!r)
 		while (i--)
 			*--(*line) = h_buff[i];
@@ -120,10 +118,9 @@ int				get_next_line(const int fd, char **line)
 
 	if (line)
 		*line = 0;
-	if (!line || !(fd_s = get_set_fd_state(fd, GET_FD)))
-		return (-1);
-	else if (!(ret = known_smallline(fd_s, line)) &&
-			!(ret = read_line(line, 0, fd_s)))
+	if (line && (fd_s = get_set_fd_state(fd, GET_FD)) &&
+		!(ret = known_smallline(fd_s, line)) &&
+		!(ret = read_line(line, 0, fd_s)))
 	{
 		ft_memcpy((*line -= fd_s->len), fd_s->p_b, fd_s->len);
 		fd_s->len = 0;
