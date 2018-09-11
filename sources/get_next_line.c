@@ -118,8 +118,9 @@ int				get_next_line(const int fd, char **line)
 
 	if (line)
 		*line = 0;
-	if (line && (fd_s = get_set_fd_state(fd, GET_FD)) &&
-		!(ret = known_smallline(fd_s, line)) &&
+	if (!line || !(fd_s = get_set_fd_state(fd, GET_FD)))
+		return (-1);
+	if (!(ret = known_smallline(fd_s, line)) &&
 		!(ret = read_line(line, 0, fd_s)))
 	{
 		ft_memcpy((*line -= fd_s->len), fd_s->p_b, fd_s->len);
