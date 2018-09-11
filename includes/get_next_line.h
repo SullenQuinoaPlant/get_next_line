@@ -17,19 +17,19 @@
 # include <unistd.h>
 # include "libft.h"
 
-# define ERROR ~((size_t)0)
-
 # define BUFF_SIZE 1000
 # define EOL '\n'
-# define BIGBIGADR ~((size_t)0)
-# define UNALLOCATED (char*)0 + BIGBIGADR
+
+# define GET_FD 0
+# define SET_FD -1
 
 typedef struct s_fildes_state	t_s_fs;
 struct							s_fildes_state {
 	int			fd;
 	char		*buf;
-	size_t		len;
+	size_t		b_sz;
 	char		*p_b;
+	size_t		len;
 	t_s_fs		*nxt;
 };
 
