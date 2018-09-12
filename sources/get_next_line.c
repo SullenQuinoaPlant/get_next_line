@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/12 12:00:39 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/12 13:00:06 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
 	return (p);
 }
 
-static int		edge(char const *h_buff, size_t i, size_t count, int fd)
+static int		save_edge(char const *h_buff, size_t i, size_t count, int fd)
 {
 	size_t const	ip1 = i + 1;
 	size_t			len;
@@ -77,10 +77,10 @@ static int		read_line(char **line, int rank, t_s_fs *fd_s)
 	while (i < count && h_buff[i] != EOL)
 		i++;
 	if (!(r = i == BUFF_SIZE ? read_line(line, rank + 1, fd_s) : 0) &&
-		(ttl = fd_s->len + rank * BUFF_SIZE + i) &&
-		!(r = edge(h_buff, i, count, fd_s->fd)) &&
+		!(r = save_edge(h_buff, i, count, fd_s->fd)) &&
+		((ttl = fd_s->len + rank * BUFF_SIZE + i) || count) &&
 		(r = -1) &&
-		!(*line = (char*)malloc(ttl + 1)))
+		(*line = (char*)malloc(ttl + 1)))
 	{
 		r = 1;
 		*line += ttl;
@@ -125,7 +125,7 @@ int				get_next_line(const int fd, char **line)
 	if (!line || !(fd_s = get_set_fd_state(fd, GET_FD)))
 		return (-1);
 	if (!(ret = known_smallline(fd_s, line)) &&
-		!(ret = read_line(line, 0, fd_s)))
+		(ret = read_line(line, 0, fd_s)) != -1)
 	{
 		ft_memcpy((*line -= fd_s->len), fd_s->p_b, fd_s->len);
 		fd_s->len = 0;
@@ -137,5 +137,5 @@ int				get_next_line(const int fd, char **line)
 	}
 	else
 		get_set_fd_state(SET_FD, fd_s);
-	return (ret ? ret : !!**line);
+	return (ret);
 }
