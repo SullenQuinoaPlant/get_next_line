@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/12 13:15:42 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/12 13:29:25 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ static int		read_line(char **line, int rank, t_s_fs *fd_s)
 	char	*h_buff;
 	size_t	count;
 	size_t	i;
-	size_t	ttl;
 	int		r;
 
 	if (!(h_buff = malloc(BUFF_SIZE)) || (count = read(fd_s->fd, h_buff, BUFF_SIZE)) == GNL_ERR)
@@ -78,12 +77,12 @@ static int		read_line(char **line, int rank, t_s_fs *fd_s)
 		i++;
 	if (!(r = i == BUFF_SIZE ? read_line(line, rank + 1, fd_s) : 0) &&
 		!(r = save_edge(h_buff, i, count, fd_s->fd)) &&
-		((ttl = fd_s->len + rank * BUFF_SIZE + i) || count) &&
+		(count || rank || fd_s->len) &&
 		(r = -1) &&
-		(*line = (char*)malloc(ttl + 1)))
+		(*line = (char*)malloc((count = fd_s->len + rank * BUFF_SIZE + i))))
 	{
 		r = 1;
-		*line += ttl;
+		*line += count;
 		**line = '\0';
 	}
 	if (r == 1)
