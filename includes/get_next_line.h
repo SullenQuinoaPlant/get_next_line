@@ -21,7 +21,7 @@
 # define EOL '\n'
 # define GNL_ERR (size_t)-1
 
-# define GET_FD 0
+# define GET_FD (void*)0
 # define SET_FD -1
 
 typedef struct s_fildes_state	t_s_fs;
