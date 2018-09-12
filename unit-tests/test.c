@@ -16,20 +16,26 @@ int		main(int ac, char **av)
 			printf("%s\n", p_b);
 		free(p_b);
 	}
+	if (p_b)
+		free(p_b);
 
-	int	fd1 = open("./test.c", O_WRONLY);
+	int	fd1 = open("boilerplate.c", O_WRONLY);
 	int	fd2 = open("./Makefile", O_WRONLY);
 	char	*p1, *p2;
-	while ((ret = get_next_line(fd1, &p1)) == 1 &&
+	while ((ret = get_next_line(fd1, &p1)) == 1 ||
 		(ret = get_next_line(fd2, &p2)) == 1)
 	{
 		if (p1)
-			printf("%s\n", p1);
+			printf("p1->%s\n", p1);
 		free(p1);
 		if (p2)
-			printf("%s\n", p2);
+			printf("p2->%s\n", p2);
 		free(p2);
 	}
+	if (p1)
+		free(p1);
+	if (p2)
+		free(p2);
 	close(fd1);
 	close(fd2);
 	return (0);
