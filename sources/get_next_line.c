@@ -6,11 +6,33 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/11 13:32:01 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/12 15:03:49 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
+{
+	static t_s_fs	anchor = (t_s_fs){-1, 0, 0, 0, 0, 0};
+	t_s_fs			*p;
+	t_s_fs			*prev;
+	char			c;
+
+	if (set.fd)
+	{
+		if (!(p = malloc(sizeof(t_s_fs))))
+			return ();
+	}
+	p = &anchor;
+	while (p && p->fd != get_fd && (prev = p) && ((p = p->nxt) || 1))
+		prev->nxt = p;
+	set = UNALLOCATABLE;
+	if (anchor.len && p != &anchor && (set = malloc(sizeof(t_s_fs))))
+		memcpy(set, &anchor, sizeof(t_s_fs));
+	anchor = p ? *p : (t_s_fs){get_fd, 0, 0, 0, 0, set};
+	return (p);
+}
 
 static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
 {
@@ -24,11 +46,19 @@ static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
 		set->nxt = anchor.nxt;
 		anchor.nxt = set;
 	}
-	else if (get_fd >=  0)
+	else if (get_fd >= 0)
 	{
 		p = &anchor;
+<<<<<<< HEAD
 		while (p && p->fd != get_fd && (prev = p))
 			p = p->nxt;
+=======
+		while (p && p->fd != get_fd)
+		{
+			prev = p;
+			p = p->nxt;
+		}
+>>>>>>> 342cc3bf5020c8eba24337ca5be66b7524f79cdc
 		if (p)
 			prev->nxt = p->nxt;
 		else if (!read(get_fd, &c, 0) && (p = malloc(sizeof(t_s_fs))))
@@ -37,7 +67,7 @@ static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
 	return (p);
 }
 
-static int		edge(char const *h_buff, size_t i, size_t count, int fd)
+static int		save_edge(char const *h_buff, size_t i, size_t count, int fd)
 {
 	size_t const	ip1 = i + 1;
 	size_t			len;
@@ -59,37 +89,39 @@ static int		edge(char const *h_buff, size_t i, size_t count, int fd)
 	return (-1);
 }
 
-static int		read_line(char **line, int rank, t_s_fs *fd_s)
+static int		read_line(char **ret, int rank, t_s_fs *fd)
 {
-	char	h_buff[BUFF_SIZE];
-	size_t	count;
+	char	*buf;
+	size_t	sz;
 	size_t	i;
 	int		r;
 
-	r = -1;
-	if ((count = read(fd_s->fd, h_buff, BUFF_SIZE)) == GNL_ERR)
-		return (r);
+	r = 0;
+	if (!(buf = malloc(BUFF_SIZE)) ||
+		(sz = read(fd->fd, buf, BUFF_SIZE)) == (size_t)-1))
+		r = -1;
 	i = 0;
-	while (i < count && h_buff[i] != EOL)
+	while ((r != -1) && i < sz && buf[i] != EOL)
 		i++;
-	if (i == BUFF_SIZE)
-		r = read_line(line, rank + 1, fd_s);
-	else if ((*line = malloc(fd_s->len + rank * BUFF_SIZE + i + 1)) &&
-		!(r = edge(h_buff, i, count, fd_s->fd)))
+	if (!r && !(r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : 0) &&
+		!(r = save_edge(buf, i, sz, fd->fd)) && (sz || rank || fd->len) &&
+		(r = -1) &&
+		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i) + 1)))
 	{
-		*line += fd_s->len + rank * BUFF_SIZE + i;
-		**line = '\0';
+		*ret += sz;
+		**ret = '\0';
 	}
-	if (!r)
+	if (*ret)
 		while (i--)
-			*--(*line) = h_buff[i];
+			*--(*ret) = buf[i];
+	free(buf);
 	return (r);
 }
 
-static int		known_smallline(t_s_fs *fd_s, char **line)
+static int		known_smallline(t_s_fs *fd, char **line)
 {
-	char *const		strt = fd_s->p_b;
-	char *const		lim = strt + fd_s->len;
+	char *const		strt = fd->p_b;
+	char *const		lim = strt + fd->len;
 	size_t			len;
 	char			*p;
 
@@ -102,8 +134,12 @@ static int		known_smallline(t_s_fs *fd_s, char **line)
 				return (-1);
 			(*line)[--len] = '\0';
 			ft_memcpy(*line, strt, len);
-			fd_s->p_b = p;
-			fd_s->len -= ++len;
+			fd->p_b = p;
+<<<<<<< HEAD
+			fd->len -= ++len;
+=======
+			fd->len -= len + 1;
+>>>>>>> 342cc3bf5020c8eba24337ca5be66b7524f79cdc
 			return (1);
 		}
 	return (0);
@@ -112,24 +148,24 @@ static int		known_smallline(t_s_fs *fd_s, char **line)
 int				get_next_line(const int fd, char **line)
 {
 	int		ret;
-	t_s_fs	*fd_s;
+	t_s_fs	*fd;
 
 	if (line)
-		*line = 0;
-	if (!line || !(fd_s = get_set_fd_state(fd, GET_FD)))
+		*line = malloc(0);
+	if (!line || !(fd = get_set_fd_state(fd, GET_FD)))
 		return (-1);
-	if (!(ret = known_smallline(fd_s, line)) &&
-		!(ret = read_line(line, 0, fd_s)))
+	if (!(ret = known_smallline(fd, line)) &&
+		(ret = read_line(line, 0, fd)) != -1)
 	{
-		ft_memcpy((*line -= fd_s->len), fd_s->p_b, fd_s->len);
-		fd_s->len = 0;
+		ft_memcpy((*line -= fd->len), fd->p_b, fd->len);
+		fd->len = 0;
 	}
-	if (!fd_s->len)
+	if (!fd->len)
 	{
-		ft_cleanfree(fd_s->buf, fd_s->b_sz);
-		ft_cleanfree(fd_s, sizeof(t_s_fs));
+		ft_cleanfree(fd->buf, fd->b_sz);
+		ft_cleanfree(fd, sizeof(t_s_fs));
 	}
 	else
-		get_set_fd_state(SET_FD, fd_s);
-	return (ret ? ret : !!**line);
+		get_set_fd_state(SET_FD, fd);
+	return (ret);
 }
