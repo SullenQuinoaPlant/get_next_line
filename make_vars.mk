@@ -13,8 +13,8 @@ LIB_DIR := $(ROOT)/libs
 LIBS_L := $(LIB_DIR)/objects
 LIBS_I := $(LIB_DIR)/includes
 
-#CC = /Users/nmauvari/Applications/GCC/bin/gcc-8.1
-CC = gcc
+CC = /Users/nmauvari/Applications/GCC/bin/gcc-8.1
+#CC = gcc
 CFLAGS_MORE =
 CFLAGS = -Wall -Wextra -Werror -I $(INC_DIR)
 CFLAGS += $(CFLAGS_MORE)

@@ -81,8 +81,11 @@ int		main(int ac, char *av[])
 			ret = get_next_line(fd, &line);
 			printf("line: %s\n", line);
 			free(line);
-			line = 0;
+			assert_int_equal(ret, 1);
 			close(fd);
+			ret = get_next_line(fd, &line);
+			printf("line: %s\n", line);
+			free(line);
 			assert_int_equal(ret, 0);
 		}
 		else
@@ -104,7 +107,6 @@ int		main(int ac, char *av[])
 			ret = get_next_line(fd, &line);
 			printf("line: %s\n", line);
 			free(line);
-			line = 0;
 			close(fd);
 			assert_int_equal(ret, 1);
 		}
@@ -124,10 +126,9 @@ int		main(int ac, char *av[])
 		printf("file path to open : %s\n", f_path);
 		if ((fd = open(f_path, O_RDONLY)) != -1)
 		{
-			ret = 1;
-			while (ret == 1)
+			while ((ret = get_next_line(fd, &line)))
 			{
-				ret = get_next_line(fd, &line);
+				
 				printf("line: %s\n", line);
 				free(line);
 			}
@@ -140,7 +141,7 @@ int		main(int ac, char *av[])
 			fail();
 		}
 	)
-	
+
 	T_D(while_1, td,
 		char	*line;
 		int		count;
