@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/11 13:32:01 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/12 12:00:39 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,14 @@ static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
 		set->nxt = anchor.nxt;
 		anchor.nxt = set;
 	}
-	else if (get_fd >=  0)
+	else if (get_fd >= 0)
 	{
 		p = &anchor;
-		prev = &anchor;
-		while (p->fd != get_fd && (p = p->nxt))
+		while (p && p->fd != get_fd)
+		{
 			prev = p;
+			p = p->nxt;
+		}
 		if (p)
 			prev->nxt = p->nxt;
 		else if (!read(get_fd, &c, 0) && (p = malloc(sizeof(t_s_fs))))
@@ -66,23 +68,25 @@ static int		read_line(char **line, int rank, t_s_fs *fd_s)
 	char	h_buff[BUFF_SIZE];
 	size_t	count;
 	size_t	i;
+	size_t	ttl;
 	int		r;
 
-	r = -1;
 	if ((count = read(fd_s->fd, h_buff, BUFF_SIZE)) == GNL_ERR)
-		return (r);
+		return (-1);
 	i = 0;
 	while (i < count && h_buff[i] != EOL)
 		i++;
-	if (i == BUFF_SIZE)
-		r = read_line(line, rank + 1, fd_s);
-	else if ((*line = malloc(fd_s->len + rank * BUFF_SIZE + i + 1)) &&
-		!(r = edge(h_buff, i, count, fd_s->fd)))
+	if (!(r = i == BUFF_SIZE ? read_line(line, rank + 1, fd_s) : 0) &&
+		(ttl = fd_s->len + rank * BUFF_SIZE + i) &&
+		!(r = edge(h_buff, i, count, fd_s->fd)) &&
+		(r = -1) &&
+		!(*line = (char*)malloc(ttl + 1)))
 	{
-		*line += fd_s->len + rank * BUFF_SIZE + i;
+		r = 1;
+		*line += ttl;
 		**line = '\0';
 	}
-	if (!r)
+	if (r == 1)
 		while (i--)
 			*--(*line) = h_buff[i];
 	return (r);
@@ -105,7 +109,7 @@ static int		known_smallline(t_s_fs *fd_s, char **line)
 			(*line)[len] = '\0';
 			ft_memcpy(*line, strt, len);
 			fd_s->p_b = p;
-			fd_s->len -= len;
+			fd_s->len -= len + 1;
 			return (1);
 		}
 	return (0);
@@ -117,7 +121,7 @@ int				get_next_line(const int fd, char **line)
 	t_s_fs	*fd_s;
 
 	if (line)
-		*line = 0;
+		*line = malloc(0);
 	if (!line || !(fd_s = get_set_fd_state(fd, GET_FD)))
 		return (-1);
 	if (!(ret = known_smallline(fd_s, line)) &&

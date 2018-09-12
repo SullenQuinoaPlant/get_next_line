@@ -82,7 +82,6 @@ int		main(int ac, char *av[])
 			printf("line: %s\n", line);
 			free(line);
 			assert_int_equal(ret, 1);
-			close(fd);
 			ret = get_next_line(fd, &line);
 			printf("line: %s\n", line);
 			free(line);
@@ -150,15 +149,16 @@ int		main(int ac, char *av[])
 		count = 0;
 		while (1)
 		{
-			if (count > MAX_1 || (ret = get_next_line(0, &line)) == -1)
+			if (count > MAX_1)
+				break ;
+			if ((ret = get_next_line(0, &line)) == -1)
 			{
-				if (ret == -1)
-					printf("error %d in get_next_line\n", errno);
+				printf("error %d in get_next_line\n", errno);
 				break;
 			}
 			count++;
 			printf("line %d : %s\n", count, line);
-			free(line);
+			//free(line);
 		}
 	)
 	return (run_test_arr(ac, av));
