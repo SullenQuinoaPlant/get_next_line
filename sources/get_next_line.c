@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/12 13:00:06 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/12 13:15:42 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,13 @@ static int		save_edge(char const *h_buff, size_t i, size_t count, int fd)
 
 static int		read_line(char **line, int rank, t_s_fs *fd_s)
 {
-	char	h_buff[BUFF_SIZE];
+	char	*h_buff;
 	size_t	count;
 	size_t	i;
 	size_t	ttl;
 	int		r;
 
-	if ((count = read(fd_s->fd, h_buff, BUFF_SIZE)) == GNL_ERR)
+	if (!(h_buff = malloc(BUFF_SIZE)) || (count = read(fd_s->fd, h_buff, BUFF_SIZE)) == GNL_ERR)
 		return (-1);
 	i = 0;
 	while (i < count && h_buff[i] != EOL)
@@ -89,6 +89,7 @@ static int		read_line(char **line, int rank, t_s_fs *fd_s)
 	if (r == 1)
 		while (i--)
 			*--(*line) = h_buff[i];
+	free(h_buff);
 	return (r);
 }
 
