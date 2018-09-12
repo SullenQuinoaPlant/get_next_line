@@ -100,12 +100,12 @@ static int		known_smallline(t_s_fs *fd_s, char **line)
 		if (*p++ == EOL)
 		{
 			len = p - strt;
-			if (len && !(*line = malloc(len--)))
+			if (len && !(*line = malloc(len)))
 				return (-1);
-			(*line)[len] = '\0';
+			(*line)[--len] = '\0';
 			ft_memcpy(*line, strt, len);
 			fd_s->p_b = p;
-			fd_s->len -= len;
+			fd_s->len -= ++len;
 			return (1);
 		}
 	return (0);
