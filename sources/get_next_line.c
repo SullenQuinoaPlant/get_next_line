@@ -6,11 +6,33 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/12 13:29:25 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/12 15:03:49 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
+{
+	static t_s_fs	anchor = (t_s_fs){-1, 0, 0, 0, 0, 0};
+	t_s_fs			*p;
+	t_s_fs			*prev;
+	char			c;
+
+	if (set.fd)
+	{
+		if (!(p = malloc(sizeof(t_s_fs))))
+			return ();
+	}
+	p = &anchor;
+	while (p && p->fd != get_fd && (prev = p) && ((p = p->nxt) || 1))
+		prev->nxt = p;
+	set = UNALLOCATABLE;
+	if (anchor.len && p != &anchor && (set = malloc(sizeof(t_s_fs))))
+		memcpy(set, &anchor, sizeof(t_s_fs));
+	anchor = p ? *p : (t_s_fs){get_fd, 0, 0, 0, 0, set};
+	return (p);
+}
 
 static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
 {

@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:44 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/12 13:05:08 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/12 13:35:58 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <unistd.h>
 # include "libft.h"
 
-# define BUFF_SIZE 10000000
+# define BUFF_SIZE 1000000
 # define EOL '\n'
 # define GNL_ERR (size_t)-1
 
