@@ -82,7 +82,7 @@ static int		read_line(char **ret, int rank, t_s_fs *fd)
 	if (*ret)
 		while (i--)
 			*(*ret)-- = buf[i];
-	ft_cleanfree(buf, BUFF_SIFE);
+	ft_cleanfree(buf, BUFF_SIZE);
 	return (r);
 }
 
