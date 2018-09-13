@@ -42,7 +42,6 @@ static int		case_edge(char const *last_b, size_t i, size_t rd_sz, int fd)
 	size_t			len;
 	t_s_fs			*new_s;
 
-	last_b[i - 1] = '\0';
 	if (rd_sz == i)
 		return (0);
 	len = rd_sz - i;
@@ -77,12 +76,13 @@ static int		read_line(char **ret, int rank, t_s_fs *fd)
 	if (!r && !(r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : 0) &&
 		!((r = case_edge(buf, i, sz, fd->fd)) == -1) &&
 		(sz || rank || fd->len) &&
-		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i) + 1)))
-			*ret += sz;
+		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i--))) &&
+		(*ret += --sz))
+			**ret = '\0';
 	if (*ret)
 		while (i--)
 			*(*ret)-- = buf[i];
-	ft_cleanfree(buf);
+	ft_cleanfree(buf, BUFF_SIFE);
 	return (r);
 }
 
