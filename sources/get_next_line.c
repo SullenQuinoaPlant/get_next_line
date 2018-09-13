@@ -19,28 +19,6 @@ static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
 	t_s_fs			*prev;
 	char			c;
 
-	if (set.fd)
-	{
-		if (!(p = malloc(sizeof(t_s_fs))))
-			return ();
-	}
-	p = &anchor;
-	while (p && p->fd != get_fd && (prev = p) && ((p = p->nxt) || 1))
-		prev->nxt = p;
-	set = UNALLOCATABLE;
-	if (anchor.len && p != &anchor && (set = malloc(sizeof(t_s_fs))))
-		memcpy(set, &anchor, sizeof(t_s_fs));
-	anchor = p ? *p : (t_s_fs){get_fd, 0, 0, 0, 0, set};
-	return (p);
-}
-
-static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
-{
-	static t_s_fs	anchor = (t_s_fs){-1, 0, 0, 0, 0, 0};
-	t_s_fs			*p;
-	t_s_fs			*prev;
-	char			c;
-
 	if ((p = set))
 	{
 		set->nxt = anchor.nxt;
@@ -49,19 +27,11 @@ static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
 	else if (get_fd >= 0)
 	{
 		p = &anchor;
-<<<<<<< HEAD
 		while (p && p->fd != get_fd && (prev = p))
 			p = p->nxt;
-=======
-		while (p && p->fd != get_fd)
-		{
-			prev = p;
-			p = p->nxt;
-		}
->>>>>>> 342cc3bf5020c8eba24337ca5be66b7524f79cdc
-		if (p)
-			prev->nxt = p->nxt;
-		else if (!read(get_fd, &c, 0) && (p = malloc(sizeof(t_s_fs))))
+		if ((prev->nxt = p ? p->nxt : 0))
+			return (p);
+		if ((p = !read(get_fd, &c, 0) ? malloc(sizeof(t_s_fs)) : 0))
 			*p = (t_s_fs){get_fd, 0, 0, 0, 0, 0};
 	}
 	return (p);
@@ -135,11 +105,7 @@ static int		known_smallline(t_s_fs *fd, char **line)
 			(*line)[--len] = '\0';
 			ft_memcpy(*line, strt, len);
 			fd->p_b = p;
-<<<<<<< HEAD
-			fd->len -= ++len;
-=======
 			fd->len -= len + 1;
->>>>>>> 342cc3bf5020c8eba24337ca5be66b7524f79cdc
 			return (1);
 		}
 	return (0);
