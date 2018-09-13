@@ -77,11 +77,11 @@ static int		read_line(char **ret, int rank, t_s_fs *fd)
 		!((r = case_edge(buf, i, sz, fd->fd)) == -1) &&
 		(sz || rank || fd->len) &&
 		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i--))) &&
-		(*ret += --sz))
-			**ret = '\0';
+		(*ret += sz))
+			*--*ret = '\0';
 	if (*ret)
 		while (i--)
-			*(*ret)-- = buf[i];
+			*--*ret = buf[i];
 	ft_cleanfree(buf, BUFF_SIZE);
 	return (r);
 }
