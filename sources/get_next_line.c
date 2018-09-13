@@ -42,7 +42,7 @@ static int		case_edge(char const *last_b, size_t i, size_t rd_sz, int fd)
 	size_t			len;
 	t_s_fs			*new_s;
 
-	last_buff[i - 1] = '\0';
+	last_b[i - 1] = '\0';
 	if (rd_sz == i)
 		return (0);
 	len = rd_sz - i;
@@ -68,22 +68,21 @@ static int		read_line(char **ret, int rank, t_s_fs *fd)
 
 	r = 0;
 	if (!(buf = malloc(BUFF_SIZE)) ||
-		(sz = read(fd->fd, buf, BUFF_SIZE)) == (size_t)-1))
+		(sz = read(fd->fd, buf, BUFF_SIZE)) == (size_t)-1)
 		r = -1;
 	i = 0;
 	if (!r)
 		while (i < sz && buf[i++] != EOL)
 			;
 	if (!r && !(r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : 0) &&
-		!(r = case_edge(buf, i, sz, fd->fd)) && (sz || rank || fd->len) &&
-		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i) + 1)) &&
+		!((r = case_edge(buf, i, sz, fd->fd)) == -1) &&
+		(sz || rank || fd->len) &&
+		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i) + 1)))
 			*ret += sz;
 	if (*ret)
 		while (i--)
 			*(*ret)-- = buf[i];
-	else
-		r = -1;
-	free(buf);
+	ft_cleanfree(buf);
 	return (r);
 }
 
@@ -110,14 +109,14 @@ static int		known_smallline(t_s_fs *fd, char **line)
 	return (0);
 }
 
-int				get_next_line(const int fd, char **line)
+int				get_next_line(const int at_fd, char **line)
 {
 	int		r;
 	t_s_fs	*fd;
 
 	if (line)
 		*line = malloc(0);
-	if (!line || !(fd = get_set_fd_state(fd, GET_FD)))
+	if (!line || !(fd = get_set_fd_state(at_fd, GET_FD)))
 		return (-1);
 	if (!(r = known_smallline(fd, line)) &&
 		(r = read_line(line, 0, fd)) != -1)
@@ -132,5 +131,5 @@ int				get_next_line(const int fd, char **line)
 	}
 	else
 		get_set_fd_state(SET_FD, fd);
-	return (r);
+	return (r ? r : !!**line);
 }
