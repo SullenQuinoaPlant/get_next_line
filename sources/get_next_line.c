@@ -131,5 +131,5 @@ int				get_next_line(const int at_fd, char **line)
 	}
 	else
 		get_set_fd_state(SET_FD, fd);
-	return (r ? r : !!**line);
+	return (r ? r : !!*line);
 }
