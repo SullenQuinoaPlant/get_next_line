@@ -115,7 +115,7 @@ int				get_next_line(const int at_fd, char **line)
 	t_s_fs	*fd;
 
 	if (line)
-		*line = malloc(0);
+		*line = 0;
 	if (!line || !(fd = get_set_fd_state(at_fd, GET_FD)))
 		return (-1);
 	if (!(r = known_smallline(fd, line)) &&
