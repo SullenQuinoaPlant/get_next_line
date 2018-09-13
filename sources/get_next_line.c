@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
+static t_s_fs	*get_set_fd_state(int get, t_s_fs *set)
 {
 	static t_s_fs	anchor = (t_s_fs){-1, 0, 0, 0, 0, 0};
 	t_s_fs			*p;
@@ -24,33 +24,33 @@ static t_s_fs	*get_set_fd_state(int get_fd, t_s_fs *set)
 		set->nxt = anchor.nxt;
 		anchor.nxt = set;
 	}
-	else if (get_fd >= 0)
+	else if (get >= 0)
 	{
 		p = &anchor;
-		while (p && p->fd != get_fd && (prev = p))
+		while (p && p->fd != get && (prev = p))
 			p = p->nxt;
-		if ((prev->nxt = p ? p->nxt : 0))
-			return (p);
-		if ((p = !read(get_fd, &c, 0) ? malloc(sizeof(t_s_fs)) : 0))
-			*p = (t_s_fs){get_fd, 0, 0, 0, 0, 0};
+		if (p)
+			prev->nxt = p->nxt;
+		else if ((p = !read(get, &c, 0) ? malloc(sizeof(t_s_fs)) : 0))
+			*p = (t_s_fs){get, 0, 0, 0, 0, 0};
 	}
 	return (p);
 }
 
-static int		save_edge(char const *h_buff, size_t i, size_t count, int fd)
+static int		case_edge(char const *last_b, size_t i, size_t rd_sz, int fd)
 {
-	size_t const	ip1 = i + 1;
 	size_t			len;
 	t_s_fs			*new_s;
 
-	if (count <= ip1)
+	last_buff[i - 1] = '\0';
+	if (rd_sz == i)
 		return (0);
-	len = count - ip1;
+	len = rd_sz - i;
 	if ((new_s = malloc(sizeof(t_s_fs))) &&
 		(new_s->buf = malloc(len)))
 	{
 		*new_s = (t_s_fs){fd, new_s->buf, len, new_s->buf, len, 0};
-		ft_memcpy(new_s->buf, h_buff + ip1, len);
+		ft_memcpy(new_s->buf, last_b + i, len);
 		get_set_fd_state(SET_FD, new_s);
 		return (0);
 	}
@@ -71,19 +71,18 @@ static int		read_line(char **ret, int rank, t_s_fs *fd)
 		(sz = read(fd->fd, buf, BUFF_SIZE)) == (size_t)-1))
 		r = -1;
 	i = 0;
-	while ((r != -1) && i < sz && buf[i] != EOL)
-		i++;
+	if (!r)
+		while (i < sz && buf[i++] != EOL)
+			;
 	if (!r && !(r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : 0) &&
-		!(r = save_edge(buf, i, sz, fd->fd)) && (sz || rank || fd->len) &&
-		(r = -1) &&
-		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i) + 1)))
-	{
-		*ret += sz;
-		**ret = '\0';
-	}
+		!(r = case_edge(buf, i, sz, fd->fd)) && (sz || rank || fd->len) &&
+		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i) + 1)) &&
+			*ret += sz;
 	if (*ret)
 		while (i--)
-			*--(*ret) = buf[i];
+			*(*ret)-- = buf[i];
+	else
+		r = -1;
 	free(buf);
 	return (r);
 }
@@ -113,15 +112,15 @@ static int		known_smallline(t_s_fs *fd, char **line)
 
 int				get_next_line(const int fd, char **line)
 {
-	int		ret;
+	int		r;
 	t_s_fs	*fd;
 
 	if (line)
 		*line = malloc(0);
 	if (!line || !(fd = get_set_fd_state(fd, GET_FD)))
 		return (-1);
-	if (!(ret = known_smallline(fd, line)) &&
-		(ret = read_line(line, 0, fd)) != -1)
+	if (!(r = known_smallline(fd, line)) &&
+		(r = read_line(line, 0, fd)) != -1)
 	{
 		ft_memcpy((*line -= fd->len), fd->p_b, fd->len);
 		fd->len = 0;
@@ -133,5 +132,5 @@ int				get_next_line(const int fd, char **line)
 	}
 	else
 		get_set_fd_state(SET_FD, fd);
-	return (ret);
+	return (r);
 }
