@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git clone git://git.cryptomilk.org/projects/cmocka.git
+git clone git://git.cryptomilk.org/projects/cmocka.git cmocka_download
 mkdir -p cmocka_build
 cd cmocka_build && cmake ../cmocka_download && make
 cd ..
