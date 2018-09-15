@@ -41,10 +41,6 @@ int		main(int ac, char *av[])
 		return (0);
 	}
 
-	T(nop,
-		(void)state;
-	)
-
 	T_D(bad_fildes_1, td,
 		char	*line;
 		int		ret;
@@ -87,7 +83,7 @@ int		main(int ac, char *av[])
 			free(line);
 			line = 0;
 			close(fd);
-			assert_int_equal(ret, 0);
+			assert_int_equal(ret, 1);
 		}
 		else
 		{
