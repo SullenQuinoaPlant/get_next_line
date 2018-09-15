@@ -8,11 +8,10 @@ install:
  - LIBS_I="$INSTALL_HERE""/includes"
  - LIBS_L="$INSTALL_HERE""/objects"
  - . .travis/install_cmocka.sh
- - ls -R $INSTALL_HERE
  - . .travis/install_42FileChecker.sh
 
 before_script :
- - make libft
+ - make build_dependencies
 
 script:
  - make
@@ -20,4 +19,3 @@ script:
  - make project
  - bash ~/42FileChecker/42FileChecker.sh --project "gnl" --path "$(pwd)/project" --no-norminette
  - cat ~/42FileChecker/.my*
-

@@ -1,13 +1,15 @@
 ifndef ROOT
 	ROOT = ..
-	include $(ROOT)/make_vars.mk
+	include $(ROOT)/Makefile
 endif
 
+.PHONY : build_dependencies
+build_dependencies : $(DEPENDENCIES)
 
 .PHONY : libft
 libft :
 	-git clone\
-		--single-branch -b the_lib\
+		--single-branch -b release\
 		--depth 1\
 		https://github.com/SullenQuinoaPlant/Libft.git\
 		$(LIB_DIR)/$@
@@ -16,8 +18,8 @@ libft :
 	cp $(LIB_DIR)/$@/libft.a $(LIBS_L)
 
 
-.PHONY : clean-libft
-clean-libft :
-	-rm libft
-	-rm $(LIBS_I)/libft.h
-	-rm $(LIBS_L)/libft.a
+.PHONY : clean-lib*
+clean-lib% :
+	-rm -rf $(LIB_DIR)/lib$*
+	-rm $(LIBS_I)/lib$*.h
+	-rm $(LIBS_L)/lib$*.a

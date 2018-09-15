@@ -1,6 +1,6 @@
 ifndef ROOT
-	ROOT = ..
-	include $(ROOT)/make_vars.mk
+ ROOT = ..
+ include $(ROOT)/make_vars.mk
 endif
 
 TEST_SRCS := $(wildcard $(UTEST_DIR)/*.test.c)
@@ -8,11 +8,8 @@ TEST_OBJS := $(TEST_SRCS:.c=.o)
 BUILD_STAMPS := $(TEST_OBJS:.o=.build.stamp)
 EXECUTION_STAMPS := $(TEST_OBJS:.o=.execution.stamp)
 
-CC = gcc
-CFLAGS_MORE =
-CFLAGS = -fno-builtin
-CFLAGS += $(CFLAGS_MORE)
-
+CTESTFLAGS = -I $(LIBS_I) -I $(INC_DIR) -L $(LIBS_L) -fno-builtin
+CTESTFLAGS += $(CFLAGS_MORE)
 
 
 .PHONY : unit-tests ut
@@ -23,8 +20,8 @@ unit-tests ut : list_tests build_tests run_tests
 #STANDALONE
 .PHONY : alone
 alone :
-	gcc -I ../sources -I ../libs/includes -L ../libs/objects\
-		test.c -lft -g
+	$(CC) -I ../includes -I ../libs/includes -L ../libs/objects\
+		test.c -lgetnextline -lft -g
 
 ############
 #BUILD TESTS
@@ -34,39 +31,35 @@ build_tests : cmocka $(TEST_OBJS)
 
 .PHONY : cmocka
 cmocka : 
-	if $(CC) $(CFLAGS)\
-		-I $(LIBS_I) -L $(LIBS_L)\
+	if $(CC) $(CTESTFLAGS)\
 	 	$(UTEST_DIR)/boilerplate.c\
 		 -lcmocka_shared -o test.o; then\
 			rm test.o;\
 			echo "cmocka already installed";\
 	else\
-		$(MAKE) -C $(UTEST_DIR)/cmocka/;\
+		-$(MAKE) -C $(UTEST_DIR)/cmocka/;\
 		mv $(UTEST_DIR)/cmocka/libcmocka* $(LIBS_L)/;\
 		mv $(UTEST_DIR)/cmocka/cmocka.h $(LIBS_I)/;\
 	fi
 
-%.test.o $(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS)\
-		-I $(LIBS_I) -I $(SRC_DIR)\
+$(UTEST_DIR)/%.test.o : $(UTEST_DIR)/%.test.c $(SRC_DIR)/%.c
+	$(CC) $(CTESTFLAGS)\
+		-I $(SRC_DIR)\
 		-D main=testee_main\
-		-include $(SRC_DIR)/$*.c\
 		$<\
 		-L $(LIBS_L)\
-		-lcmocka_shared -lft\
+		-lcmocka_shared -lgetnextline -lft\
 		-o $@\
-		-Wl,-rpath=$$(readlink -e $(LIBS_L));\
+		-Wl,-rpath="$(LIBS_L)";\
 		touch $(UTEST_DIR)/$*.test.build.stamp
 
 %.test.o : %.test.c
-	$(CC) $(CFLAGS)\
+	$(CC) $(CTESTFLAGS)\
 		-I $(SRC_DIR)\
-		-I $(LIBS_I)\
 		$<\
-		-L $(LIBS_L)\
-		-lcmocka -lft\
+		-lcmocka -lgetnextline -lft\
 		-o $@\
-		-Wl,-rpath=$$(readlink -e $(LIBS_L));\
+		-Wl,-rpath "$(LIBS_L)";\
 		touch $(UTEST_DIR)/$(*F).test.build.stamp
 
 test.o : test.c

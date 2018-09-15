@@ -2,3 +2,4 @@ objects/
 !objects/lib_objects_live_here
 includes/
 !includes/where_headers_dwell
+libft/
