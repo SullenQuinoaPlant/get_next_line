@@ -10,7 +10,7 @@ EXECUTION_STAMPS := $(TEST_OBJS:.o=.execution.stamp)
 
 CC = gcc
 CFLAGS_MORE =
-CFLAGS = -fno-builtin
+CFLAGS = -fno-builtin #-Wall -Wextra -Werror
 CFLAGS += $(CFLAGS_MORE)
 
 
@@ -37,7 +37,7 @@ cmocka :
 	if $(CC) $(CFLAGS)\
 		-I $(LIBS_I) -L $(LIBS_L)\
 	 	$(UTEST_DIR)/boilerplate.c\
-		 -lcmocka_shared -o test.o; then\
+		 -lcmocka -o test.o; then\
 			rm test.o;\
 			echo "cmocka already installed";\
 	else\
@@ -53,7 +53,7 @@ cmocka :
 		-include $(SRC_DIR)/$*.c\
 		$<\
 		-L $(LIBS_L)\
-		-lcmocka_shared -lft\
+		-lcmocka -lft\
 		-o $@\
 		-Wl,-rpath=$$(readlink -e $(LIBS_L));\
 		touch $(UTEST_DIR)/$*.test.build.stamp
@@ -69,32 +69,10 @@ cmocka :
 		-Wl,-rpath=$$(readlink -e $(LIBS_L));\
 		touch $(UTEST_DIR)/$(*F).test.build.stamp
 
-test.o : test.c
-	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
-		test.c\
-		-lft\
-		-o $@
+%.test.c : $(UTEST_DIR)/cmocka/my_macro_overlay.h
+	@:
 
-test_simple.o : test_simple.c
-	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
-		$<\
-		-lft\
-		-o $@
-test_bigline.o : test_bigline.c
-	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
-		$<\
-		-lft\
-		-o $@
-test_devrand.o : test_devrand.c
-	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
-		$<\
-		-lft\
-		-o $@
-test_smalllines.o : test_smalllines.c
-	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
-		$<\
-		-lft\
-		-o $@
+
 
 
 ############
@@ -132,3 +110,15 @@ list_tests :
 	@echo $(TEST_SRCS)
 	@echo "list of test objects:"
 	@echo $(TEST_OBJS)
+
+test.o : test.c
+	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
+		test.c\
+		-lft\
+		-o $@
+
+test_simple.o : test_simple.c
+	gcc -g -I ../sources -I ../libs/includes -L ../libs/objects\
+		$<\
+		-lft\
+		-o $@
