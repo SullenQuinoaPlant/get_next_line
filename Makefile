@@ -1,20 +1,24 @@
 ifndef ROOT
 	ROOT := .
 endif
+
+.PHONY : def
+def : all
+
 include $(ROOT)/make_vars.mk
 
 
 #######
 #CORE :
-include core.mk
+include $(ROOT)/core.mk
 
 #######
 #LIBS :
-include libs/Makefile
+include $(LIB_DIR)/Makefile
 
 ########
 #TESTS :
-include unit-tests/Makefile
+include $(UTEST_DIR)/Makefile
 
 
 ########
