@@ -10,10 +10,7 @@ $(LIBS_L)/$(LIBNAME).a : $(OBJ_DIR)/$(TARGET).o
 .PHONY : header
 header : $(LIBS_I)/$(LIBNAME).h
 $(LIBS_I)/$(LIBNAME).h : $(INC_DIR)/$(TARGET).h
-	sed \
-		-e '4s@\([a-z0-9.]*\)   @lib\1@'\ 
-		-e '13,14s@\([A-Z])\)@LIB\1@'\
-		$< > $@
+	sed -e "4s/\([a-z][a-z0-9._]*\) /libgetnextline\.h/" -e "13,14s/[A-Z_][A-Z_]*/LIBGETNEXTLINE_H/" $< > $@
 
 
 $(OBJ_DIR)/$(TARGET).o : $(SRC_DIR)/$(TARGET).c 
