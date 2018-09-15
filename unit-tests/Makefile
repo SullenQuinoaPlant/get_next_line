@@ -104,7 +104,7 @@ test_smalllines.o : test_smalllines.c
 run_tests : $(EXECUTION_STAMPS)
 
 %.execution.stamp : %.build.stamp
-	./$*.o "$$(readlink -e $(UTEST_DIR))"
+	./$*.o "$$(readlink -e $(UTEST_DIR))" < /dev/random
 	touch $@
 
 %.build.stamp :
