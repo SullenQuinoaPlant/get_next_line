@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/15 10:58:40 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/15 11:13:51 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static int		read_line(char **ret, int rank, t_s_fs *fd)
 		(sz = read(fd->fd, buf, BUFF_SIZE)) != (size_t)-1)
 		while (++i < sz && buf[i] != EOL)
 			;
-	if ((r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : -1) &&
+	if ((r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : i != (size_t)-1) &&
 		!(r = case_edge(buf, ++i, sz, fd->fd)) &&
 		(sz = sz || rank || fd->len ? fd->len + rank * BUFF_SIZE + i-- : 0) &&
 		(*ret = malloc(sz)) &&

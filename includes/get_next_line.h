@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:44 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/15 10:44:11 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/15 11:17:21 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@
 # define SET_FD -1
 
 typedef struct s_fildes_state	t_s_fs;
-struct							s_fildes_state {
+struct							s_fildes_state
+{
 	int			fd;
 	char		*buf;
 	size_t		b_sz;
