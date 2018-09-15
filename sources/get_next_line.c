@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/12 15:03:49 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/15 10:02:46 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ static int		case_edge(char const *last_b, size_t i, size_t rd_sz, int fd)
 	size_t			len;
 	t_s_fs			*new_s;
 
-	if (rd_sz <= i)
-		return (0);
+	if (rd_sz <= ++i)
+		return (1);
 	len = rd_sz - i;
 	if ((new_s = malloc(sizeof(t_s_fs))) &&
 		(new_s->buf = malloc(len)))
@@ -51,7 +51,7 @@ static int		case_edge(char const *last_b, size_t i, size_t rd_sz, int fd)
 		*new_s = (t_s_fs){fd, new_s->buf, len, new_s->buf, len, 0};
 		ft_memcpy(new_s->buf, last_b + i, len);
 		get_set_fd_state(SET_FD, new_s);
-		return (0);
+		return (1);
 	}
 	else
 		free(new_s);
@@ -65,23 +65,20 @@ static int		read_line(char **ret, int rank, t_s_fs *fd)
 	size_t	i;
 	int		r;
 
-	r = 0;
-	if (!(buf = malloc(BUFF_SIZE)) ||
-		(sz = read(fd->fd, buf, BUFF_SIZE)) == (size_t)-1)
-		r = -1;
-	i = 1;
-	if (!r)
-		while (i < sz && buf[i - 1] != EOL)
-			i++;
-	if (!r && !(r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : 0) &&
-		!((r = case_edge(buf, i, sz, fd->fd)) == -1) &&
-		(sz || rank || fd->len) &&
-		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i--))) &&
+	r = -1;
+	i = -1;
+	if ((buf = malloc(BUFF_SIZE)) &&
+		(sz = read(fd->fd, buf, BUFF_SIZE)) != (size_t)-1)
+		while (++i < sz && buf[i] != EOL)
+			;
+	if (i != -1 && !(r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : 0) &&
+		(r = case_edge(buf, i, sz, fd->fd)) != -1 && (sz || rank || fd->len) &&
+		(sz = fd->len + rank * BUFF_SIZE + i + 1) &&
+		(*ret = malloc(sz)) &&
 		(*ret += sz))
-			*--*ret = '\0';
+		*--*ret = '\0';
 	if (*ret)
-		while (i--)
-			*--*ret = buf[i];
+		ft_memcpy(buf, (*ret -= i), i);
 	ft_cleanfree(buf, BUFF_SIZE);
 	return (r);
 }
@@ -98,7 +95,7 @@ static int		known_smallline(t_s_fs *fd, char **line)
 		if (*p++ == EOL)
 		{
 			len = p - strt;
-			if (len && !(*line = malloc(len)))
+			if (!(*line = malloc(len)))
 				return (-1);
 			(*line)[--len] = '\0';
 			ft_memcpy(*line, strt, len);
@@ -131,5 +128,5 @@ int				get_next_line(const int at_fd, char **line)
 	}
 	else
 		get_set_fd_state(SET_FD, fd);
-	return (r ? r : !!*line);
+	return (r ? r : !*line);
 }

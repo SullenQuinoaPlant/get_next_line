@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:44 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/11 06:47:56 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/15 10:03:26 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 
 # define BUFF_SIZE 1000
 # define EOL '\n'
-# define GNL_ERR (size_t)-1
 
 # define GET_FD (void*)0
 # define SET_FD -1
