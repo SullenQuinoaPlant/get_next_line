@@ -6,130 +6,123 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/12 15:03:49 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/01 03:20:49 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static t_s_fs	*get_set_fd_state(int get, t_s_fs *set)
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+
+static void		edge(char const *h_buff, size_t i, size_t count, t_s_f *s)
 {
-	static t_s_fs	anchor = (t_s_fs){-1, 0, 0, 0, 0, 0};
-	t_s_fs			*p;
-	t_s_fs			*prev;
-	char			c;
+	size_t const	ip1 = i + 1;
+	size_t			o_sz;
 
-	if ((p = set))
-	{
-		set->nxt = anchor.nxt;
-		anchor.nxt = set;
-	}
-	else if (get >= 0)
-	{
-		p = &anchor;
-		while (p && p->fd != get && (prev = p))
-			p = p->nxt;
-		if (p)
-			prev->nxt = p->nxt;
-		else if ((p = !read(get, &c, 0) ? malloc(sizeof(t_s_fs)) : 0))
-			*p = (t_s_fs){get, 0, 0, 0, 0, 0};
-	}
-	return (p);
-}
-
-static int		case_edge(char const *last_b, size_t i, size_t rd_sz, int fd)
-{
-	size_t			len;
-	t_s_fs			*new_s;
-
-	if (rd_sz <= i)
-		return (0);
-	len = rd_sz - i;
-	if ((new_s = malloc(sizeof(t_s_fs))) &&
-		(new_s->buf = malloc(len)))
-	{
-		*new_s = (t_s_fs){fd, new_s->buf, len, new_s->buf, len, 0};
-		ft_memcpy(new_s->buf, last_b + i, len);
-		get_set_fd_state(SET_FD, new_s);
-		return (0);
-	}
+	if (count == i || (count == BUFF_SIZE && ip1 == count))
+		s->new.o_sz = 0;
 	else
-		free(new_s);
-	return (-1);
+	{
+		o_sz = count - ip1;
+		s->new.o_sz = o_sz;
+		ft_memcpy(s->new.over + OVER_SZ - o_sz, h_buff + ip1, o_sz);
+	}
 }
 
-static int		read_line(char **ret, int rank, t_s_fs *fd)
+static char		*read_line(char **line, int rank, t_s_f *s)
 {
-	char	*buf;
-	size_t	sz;
+	char	h_buff[BUFF_SIZE];
+	size_t	count;
 	size_t	i;
-	int		r;
 
-	r = 0;
-	if (!(buf = malloc(BUFF_SIZE)) ||
-		(sz = read(fd->fd, buf, BUFF_SIZE)) == (size_t)-1)
-		r = -1;
-	i = 1;
-	if (!r)
-		while (i < sz && buf[i - 1] != EOL)
+	if ((count = read(s->fildes, h_buff, BUFF_SIZE)) != ERROR &&
+			(count || rank || s->old.o_sz))
+	{
+		i = 0;
+		while (i < count && h_buff[i] != EOL)
 			i++;
-	if (!r && !(r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : 0) &&
-		!((r = case_edge(buf, i, sz, fd->fd)) == -1) &&
-		(sz || rank || fd->len) &&
-		(*ret = malloc((sz = fd->len + rank * BUFF_SIZE + i--))) &&
-		(*ret += sz))
-			*--*ret = '\0';
-	if (*ret)
-		while (i--)
-			*--*ret = buf[i];
-	ft_cleanfree(buf, BUFF_SIZE);
-	return (r);
+		if (i == BUFF_SIZE)
+			read_line(line, rank + 1, s);
+		else if ((*line = malloc(rank * BUFF_SIZE + i + s->old.o_sz + 1)))
+		{
+			edge(h_buff, i, count, s);
+			*line += rank * BUFF_SIZE + i + s->old.o_sz;
+			**line = '\0';
+		}
+		if (*line)
+			while (i--)
+				*--(*line) = h_buff[i];
+	}
+	else if (count == ERROR)
+		*line = 0;
+	return (*line);
 }
 
-static int		known_smallline(t_s_fs *fd, char **line)
+static int		known_smallline(t_s_b *b_s, char **line)
 {
-	char *const		strt = fd->p_b;
-	char *const		lim = strt + fd->len;
-	size_t			len;
-	char			*p;
+	size_t	i;
+	size_t	ii;
+	size_t	smallline_sz;
 
-	p = strt;
-	while (p < lim)
-		if (*p++ == EOL)
+	i = OVER_SZ - b_s->o_sz;
+	ii = i;
+	while (i < OVER_SZ)
+	{
+		if (b_s->over[i] == EOL)
 		{
-			len = p - strt;
-			if (len && !(*line = malloc(len)))
-				return (-1);
-			(*line)[--len] = '\0';
-			ft_memcpy(*line, strt, len);
-			fd->p_b = p;
-			fd->len -= len + 1;
-			return (1);
+			smallline_sz = i - ii + 1;
+			if ((*line = malloc(smallline_sz)))
+			{
+				b_s->o_sz -= smallline_sz;
+				(*line)[--smallline_sz] = '\0';
+				while (smallline_sz--)
+					(*line)[smallline_sz] = b_s->over[--i];
+				return (1);
+			}
+			return (-1);
 		}
+		i++;
+	}
 	return (0);
 }
 
-int				get_next_line(const int at_fd, char **line)
+static t_s_f	*get_fd_states(int fd)
 {
-	int		r;
-	t_s_fs	*fd;
+	static t_s_f	array[A_LOT];
+	char			c;
 
-	if (line)
+	if (fd >= 0 && fd < A_LOT && !read(fd, &c, 0))
+	{
+		array[fd].fildes = fd;
+		return (array + fd);
+	}
+	return (0);
+}
+
+int				get_next_line(const int fd, char **line)
+{
+	int		ret;
+	t_s_f	*fd_state;
+	size_t	i;
+
+	ret = -1;
+	if (!line)
+		return (ret);
+	*line = UNALLOCATED;
+	if ((fd_state = get_fd_states(fd)) &&
+			!(ret = known_smallline(&fd_state->old, line)) &&
+			(ret = read_line(line, 0, fd_state) ? 0 : -1) != -1 &&
+			*line != UNALLOCATED)
+	{
+		i = 0;
+		while (i++ < fd_state->old.o_sz)
+			*--(*line) = fd_state->old.over[OVER_SZ - i];
+		fd_state->old = fd_state->new;
+		ret = 1;
+	}
+	else if (*line == UNALLOCATED)
 		*line = 0;
-	if (!line || !(fd = get_set_fd_state(at_fd, GET_FD)))
-		return (-1);
-	if (!(r = known_smallline(fd, line)) &&
-		(r = read_line(line, 0, fd)) != -1)
-	{
-		ft_memcpy((*line -= fd->len), fd->p_b, fd->len);
-		fd->len = 0;
-	}
-	if (!fd->len)
-	{
-		ft_cleanfree(fd->buf, fd->b_sz);
-		ft_cleanfree(fd, sizeof(t_s_fs));
-	}
-	else
-		get_set_fd_state(SET_FD, fd);
-	return (r ? r : !!*line);
+	return (ret);
 }
