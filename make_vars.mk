@@ -16,8 +16,9 @@ LIBS_I := $(LIB_DIR)/includes
 DEPENDENCIES : libft
 
 CC = gcc
+CFLAGS_MORE = -g
 CFLAGS = -Wall -Wextra -Werror -I $(INC_DIR)
-CFLAGS_MORE =
+CFLAGS += $(CFLAGS_MORE)
 
 
 UTEST_DIR := $(ROOT)/unit-tests

@@ -41,10 +41,6 @@ int		main(int ac, char *av[])
 		return (0);
 	}
 
-	T(nop,
-		(void)state;
-	)
-
 	T_D(bad_fildes_1, td,
 		char	*line;
 		int		ret;
@@ -134,7 +130,6 @@ int		main(int ac, char *av[])
 				ret = get_next_line(fd, &line);
 				printf("line: %s\n", line);
 				free(line);
-				line = 0;
 			}
 			close(fd);
 			assert_int_equal(ret, 0);
@@ -161,9 +156,8 @@ int		main(int ac, char *av[])
 				break;
 			}
 			count++;
-			printf("line %d : %s\n", count, line);	
+			printf("line %d : %s\n", count, line);
 			free(line);
-			line = 0;
 		}
 	)
 	return (run_test_arr(ac, av));

@@ -1,8 +1,12 @@
 BUILD_DIR = cmocka_build
 SOURCE_DIR = cmocka_source
 
-cmocka : $(BUILD_DIR) $(SOURCE_DIR)
+cmocka : $(BUILD_DIR) $(SOURCE_DIR) build move
+
+build :
 	cd $(BUILD_DIR) && cmake ../$(SOURCE_DIR) && make;
+
+move :
 	cp $(SOURCE_DIR)/include/cmocka.h .
 	cp $(BUILD_DIR)/src/libcmocka* .
 
