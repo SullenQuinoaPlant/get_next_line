@@ -7,10 +7,10 @@ cmocka : $(BUILD_DIR) $(SOURCE_DIR)
 	cp $(BUILD_DIR)/src/libcmocka* .
 
 $(BUILD_DIR) :
-	if [ -d $(BUILD_DIR) ]; then :; else mkdir $(BUILD_DIR); fi
+	if [ ! -d $(BUILD_DIR) ]; then mkdir $(BUILD_DIR); fi
 
 $(SOURCE_DIR) :
-	if [ -d $(SOURCE_DIR) ]; then :; else git clone git://git.cryptomilk.org/projects/cmocka.git $(SOURCE_DIR); fi
+	if [ ! -d $(SOURCE_DIR) ]; then git clone git://git.cryptomilk.org/projects/cmocka.git $(SOURCE_DIR); fi
 	
 
 clean :

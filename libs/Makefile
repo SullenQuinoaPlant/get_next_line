@@ -4,23 +4,17 @@ ifndef ROOT
 endif
 
 
-nop :
-	@:
-
-
-libft : $(LIBS_I)/libft.h $(LIBS_L)/libft.a
-	git clone\
+.PHONY : libft
+libft :
+	-git clone\
 		--single-branch -b the_lib\
 		--depth 1\
 		https://github.com/SullenQuinoaPlant/Libft.git\
 		$(LIB_DIR)/$@
-	cp $(LIB_DIR)/$@/libft.h $(LIBS_I)/
+	$(MAKE) -C $(LIB_DIR)/$@
+	cp $(LIB_DIR)/$@/includes/libft.h $(LIBS_I)/
+	cp $(LIB_DIR)/$@/libft.a $(LIBS_L)
 
-$(LIBS_I)/libft.h :
-	@:
-
-$(LIBS_L)/libft.a :
-	@:
 
 .PHONY : clean-libft
 clean-libft :
