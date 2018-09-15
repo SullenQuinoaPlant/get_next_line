@@ -15,6 +15,7 @@ LIBS_I := $(LIB_DIR)/includes
 
 DEPENDENCIES : libft
 
+#CC = gcc-8.2.0
 CC = gcc
 CFLAGS_MORE = -g
 CFLAGS = -Wall -Wextra -Werror -I $(INC_DIR)

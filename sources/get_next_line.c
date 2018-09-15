@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/15 10:26:59 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/15 10:58:40 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static int		case_edge(char const *last_b, size_t i, size_t rd_sz, int fd)
 	size_t			len;
 	t_s_fs			*new_s;
 
-	if (rd_sz <= ++i)
+	if (rd_sz <= i)
 		return (0);
 	len = rd_sz - i;
 	if ((new_s = malloc(sizeof(t_s_fs))) &&
@@ -71,13 +71,13 @@ static int		read_line(char **ret, int rank, t_s_fs *fd)
 		while (++i < sz && buf[i] != EOL)
 			;
 	if ((r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : -1) &&
-		!(r = case_edge(buf, i, sz, fd->fd)) &&
-		(sz = fd->len + rank * BUFF_SIZE + i + 1) > 1 &&
+		!(r = case_edge(buf, ++i, sz, fd->fd)) &&
+		(sz = sz || rank || fd->len ? fd->len + rank * BUFF_SIZE + i-- : 0) &&
 		(*ret = malloc(sz)) &&
 		(*ret += sz))
 		*--*ret = '\0';
 	if (*ret)
-		ft_memcpy(buf, (*ret -= i), i);
+		ft_memcpy((*ret -= i), buf, i);
 	ft_cleanfree(buf, BUFF_SIZE);
 	return (r);
 }
