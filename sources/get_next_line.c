@@ -6,7 +6,7 @@
 /*   By: nmauvari <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/28 03:15:48 by nmauvari          #+#    #+#             */
-/*   Updated: 2018/09/15 10:02:46 by nmauvari         ###   ########.fr       */
+/*   Updated: 2018/09/15 10:23:21 by nmauvari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int		case_edge(char const *last_b, size_t i, size_t rd_sz, int fd)
 	t_s_fs			*new_s;
 
 	if (rd_sz <= ++i)
-		return (1);
+		return (0);
 	len = rd_sz - i;
 	if ((new_s = malloc(sizeof(t_s_fs))) &&
 		(new_s->buf = malloc(len)))
@@ -51,7 +51,7 @@ static int		case_edge(char const *last_b, size_t i, size_t rd_sz, int fd)
 		*new_s = (t_s_fs){fd, new_s->buf, len, new_s->buf, len, 0};
 		ft_memcpy(new_s->buf, last_b + i, len);
 		get_set_fd_state(SET_FD, new_s);
-		return (1);
+		return (0);
 	}
 	else
 		free(new_s);
@@ -65,15 +65,14 @@ static int		read_line(char **ret, int rank, t_s_fs *fd)
 	size_t	i;
 	int		r;
 
-	r = -1;
 	i = -1;
 	if ((buf = malloc(BUFF_SIZE)) &&
 		(sz = read(fd->fd, buf, BUFF_SIZE)) != (size_t)-1)
 		while (++i < sz && buf[i] != EOL)
 			;
-	if (i != -1 && !(r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : 0) &&
-		(r = case_edge(buf, i, sz, fd->fd)) != -1 && (sz || rank || fd->len) &&
-		(sz = fd->len + rank * BUFF_SIZE + i + 1) &&
+	if ((r = i == BUFF_SIZE ? read_line(ret, rank + 1, fd) : 0) &&
+		!(r = case_edge(buf, i, sz, fd->fd)) &&
+		(sz = fd->len + rank * BUFF_SIZE + i + 1) > 1 &&
 		(*ret = malloc(sz)) &&
 		(*ret += sz))
 		*--*ret = '\0';
@@ -128,5 +127,5 @@ int				get_next_line(const int at_fd, char **line)
 	}
 	else
 		get_set_fd_state(SET_FD, fd);
-	return (r ? r : !*line);
+	return (r ? r : !!*line);
 }
